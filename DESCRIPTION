@@ -1,0 +1,13 @@
+Package: sCRM
+Title: Avian Stochastic Collision Risk Model GUI
+Version: 0.0.0.9000
+Authors@R: person('Bruno', 'Caneco', email = 'bruno@dmpstats.com', role = c('cre', 'aut'))
+Description: A GUI built for an avian stochastic Collision Risk Model (CRM). CRMs are used to understand potential wind farm effects on seabirds by estimating collision mortality. This stochastic CRM model allows uncertainty/variability in input parameters to be propagated to predicted collision numbers.
+License: MIT + file LICENSE
+Imports: 
+    config (>= 0.3.1),
+    golem (>= 0.3.1),
+    shiny (>= 1.6.0)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
