@@ -20,12 +20,13 @@
 ## 
 golem::fill_desc(
   pkg_name = "sCRM", # The Name of the package containing the App 
-  pkg_title = "Avian Stochastic Collision Risk Model GUI", # The Title of the package containing the App 
-  pkg_description = paste("A GUI built for an avian stochastic Collision Risk Model (CRM).",
+  pkg_title = "A Shiny App for a stochastic Collision Risk Model (sCRM) or seabirds", # The Title of the package containing the App 
+  pkg_description = paste("A Shiny App for a stochastic Collision Risk Model (sCRM) for seabirds.",
                           "CRMs are used to understand potential wind farm effects on seabirds",
-                          "by estimating collision mortality. This stochastic CRM model allows",
-                          "uncertainty/variability in input parameters to be propagated to predicted", 
-                          "collision numbers."), # The Description of the package containing the App 
+                          "by estimating collision mortality. This Shiny app provides an user interface",
+                          "for the stochastic version of the Band (2012) offshore CRM, based on an updated,",
+                          "and streamlined, version of Masden's (2015) R program. sCRM allows for uncertainty/variability",
+                          "in input parameters to be propagated to predicted collision numbers."), # The Description of the package containing the App 
   author_first_name = "Bruno", # Your First Name
   author_last_name = "Caneco", # Your Last Name
   author_email = "bruno@dmpstats.com", # Your Email
