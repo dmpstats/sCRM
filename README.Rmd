@@ -22,7 +22,10 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-(_Needs work_)
+_NB: This is a repo for a work-in-progress sCRM Shiny app intended to replace the current [stochCRM](https://github.com/dmpstats/stochCRM) app. The updated implementation aims to the further development of the sCRM app in terms of additional simulation and output features, combined with a major code refactoring process to improve production-level capacity._
+
+_In the meantime, please use the currently active [stochCRM](https://github.com/dmpstats/stochCRM) app. Thank you!_
+
 
 Collision Risk Models (CRMs) are used to understand potential wind farm effects on seabirds by estimating collision mortality. 
 
