@@ -29,7 +29,7 @@ golem::fill_desc(
   author_first_name = "Bruno", # Your First Name
   author_last_name = "Caneco", # Your Last Name
   author_email = "bruno@dmpstats.com", # Your Email
-  repo_url = NULL # The URL of the GitHub Repo (optional) 
+  repo_url = "https://github.com/dmpstats/sCRM" # The URL of the GitHub Repo (optional) 
 )     
 
 ## Set {golem} options ----
