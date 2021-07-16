@@ -6,6 +6,7 @@ Description: A Shiny App for a stochastic Collision Risk Model (sCRM) for seabir
 License: MIT + file LICENSE
 Imports: 
     attempt,
+    bs4Dash,
     config (>= 0.3.1),
     DT,
     glue,

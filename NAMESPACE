@@ -2,6 +2,10 @@
 
 export(run_app)
 import(shiny)
+importFrom(bs4Dash,dashboardBody)
+importFrom(bs4Dash,dashboardHeader)
+importFrom(bs4Dash,dashboardPage)
+importFrom(bs4Dash,dashboardSidebar)
 importFrom(golem,activate_js)
 importFrom(golem,add_resource_path)
 importFrom(golem,bundle_resources)

@@ -17,6 +17,7 @@
 ## Add one line by package you want to add as dependency
 usethis::use_package( "thinkr" )
 usethis::use_package("shinydashboard")
+usethis::use_package("bs4Dash")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
