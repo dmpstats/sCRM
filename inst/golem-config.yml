@@ -5,4 +5,4 @@ default:
 production:
   app_prod: yes
 dev:
-  golem_wd: C:/Users/bruno/Dropbox/sCRM/sCRM
+  golem_wd: !expr here::here()

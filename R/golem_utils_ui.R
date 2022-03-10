@@ -267,8 +267,19 @@ col_12 <- function(...){
 }
 
 #' @importFrom shiny column
+col_11 <- function(...){
+  column(11, ...)
+}
+
+
+#' @importFrom shiny column
 col_10 <- function(...){
   column(10, ...)
+}
+
+#' @importFrom shiny column
+col_9 <- function(...){
+  column(9, ...)
 }
 
 #' @importFrom shiny column
@@ -277,9 +288,21 @@ col_8 <- function(...){
 }
 
 #' @importFrom shiny column
+col_7 <- function(...){
+  column(7, ...)
+}
+
+
+#' @importFrom shiny column
 col_6 <- function(...){
   column(6, ...)
 }
+
+#' @importFrom shiny column
+col_5 <- function(...){
+  column(5, ...)
+}
+
 
 
 #' @importFrom shiny column

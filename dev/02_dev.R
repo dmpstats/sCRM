@@ -16,22 +16,57 @@
 ## Dependencies ----
 ## Add one line by package you want to add as dependency
 usethis::use_package( "thinkr" )
-usethis::use_package("shinydashboard")
 usethis::use_package("bs4Dash")
+usethis::use_package("shinipsum")
+usethis::use_package("markdown")
+usethis::use_package("shinyWidgets")
+usethis::use_package("fresh")
+usethis::use_package("shinydashboard")
+usethis::use_package("shinydashboardPlus")
+usethis::use_package("shinyjs")
+usethis::use_package("htmltools")
+usethis::use_package("bsplus")
+usethis::use_package("ggplot2")
+usethis::use_package("msm")
+usethis::use_package("dplyr")
+usethis::use_package("tidyr")
+usethis::use_package("purrr")
+usethis::use_package("rhandsontable")
+usethis::use_package("rlang")
+
+usethis::use_dev_package("stochLAB", remote = "HiDef-Aerial-Surveying/stochLAB")
+
+## Environment reproducibility
+#renv::init()
+renv::snapshot(type = "explicit")
+renv::install()
+renv::update()
+
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module( name = "name_of_module1" ) # Name of the module
-golem::add_module( name = "name_of_module2" ) # Name of the module
+golem::add_module( name = "tbp_main_wf" ) 
+golem::add_module( name = "prob_inputs" )
+golem::add_module( name = "prob_inputs_row" )
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
-golem::add_fct( "helpers" ) 
-golem::add_utils( "helpers" )
+golem::add_fct( "remove_tbp" )
+golem::add_fct( "add_scenarios_btns" )
+golem::add_fct( "wf_feat_inputs" )
+golem::add_fct( "trbn_cfg_inputs" ) 
+golem::add_fct( "input_plots" )
+golem::add_fct( "input_qtiles" ) 
+
+
+
+
+golem::add_utils("inline_inputs")
+
 
 ## External resources
 ## Creates .js and .css files at inst/app/www
-golem::add_js_file( "script" )
+golem::add_js_file( "lst_btn_clicked" )
 golem::add_js_handler( "handlers" )
 golem::add_css_file( "custom" )
 
@@ -47,6 +82,7 @@ usethis::use_test( "app" )
 
 ## Vignette ----
 usethis::use_vignette("scrm")
+usethis::use_vignette("scrm_dev")
 devtools::build_vignettes()
 
 ## Code Coverage----
@@ -94,4 +130,5 @@ usethis::use_gitlab_ci()
 # You're now set! ----
 # go to dev/03_deploy.R
 rstudioapi::navigateToFile("dev/03_deploy.R")
+
 
