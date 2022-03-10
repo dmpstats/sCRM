@@ -56,12 +56,16 @@ golem::use_recommended_deps()
 
 ## Favicon ----
 # If you want to change the favicon (default is golem's one)
-golem::use_favicon(path = "inst/app/www/hex-sCRM.ico") # path = "path/to/ico". Can be an online file. 
+golem::use_favicon(path = "inst/app/www/hexSticker_scrm.png") # path = "path/to/ico". Can be an online file. 
 golem::remove_favicon()
 
 ## Add helper functions ----
 golem::use_utils_ui()
 golem::use_utils_server()
+
+## Add options to projects' R profile (e.g to open in a different browser) 
+usethis::edit_r_profile(scope = "project")
+
 
 # You're now set! ----
 

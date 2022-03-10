@@ -1,0 +1,13 @@
+name: sCRM_dev
+title: sCRM_dev
+username:
+account: dmpstats
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5822492
+bundleId: 5666201
+url: https://dmpstats.shinyapps.io/sCRM_dev/
+when: 1646916469.01772
+lastSyncTime: 1646916469.01772
+asMultiple: FALSE
+asStatic: FALSE

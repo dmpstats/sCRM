@@ -1,0 +1,127 @@
+/* sCRM custom css style */
+
+
+/* * { font-family: Arial; } */
+
+
+/*.action-button.btn-circle-xs {*/
+  
+/* remove tabpanel buttons */
+.css-btn-rmv-tabPanel{
+  width: 18px !important; 
+  height: 18px !important;
+  font-size: 8px !important;
+  line-height: 1px !important;
+  padding: 0px !important;
+  margin-left: 12px !important;
+  vertical-align: middle !important;
+  background-color: #dd4b3942;
+  border-color: #d73925;
+  }
+  
+/* Container for app mode, i.e. deterministic or stochastic */
+.form-group.shiny-input-container.shiny-input-container-inline{
+  margin-bottom: 0px;
+  padding-top: 10px;
+  padding-right: 25px;
+}
+
+
+/* dropdown panel from shinyWidgets */  
+.dropdown-menu.dropdown-shinyWidgets{
+  border-color: #d6d6d6;
+  background-color: #fff;
+  box-shadow: 0 15px 20px rgba(11, 11, 11, 0.91);
+}
+
+
+.col-sm-6.css-col-inline-btns{
+  padding-right: 8px;
+  padding-left: 8px;
+}
+
+
+/*
+.form-group.shiny-input-container{
+  margin-bottom: 0px;
+}
+*/
+
+/* tags$table (with input parameters) formatting */
+td, th {
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 1px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.popover{
+    max-width: 100%; /* Max Width of the popover (depending on the container!) */
+}
+
+
+
+.hot-monthly {
+  font-size: 13px;
+}
+
+.hot-monthly th{
+  font-weight: bold;
+}
+
+
+/*.navbar-nav{
+  float: left;
+  margin: 0;
+  width: 100%;
+}
+*/
+
+/*
+div.form-group.shiny-input-container{
+  margin-bottom: 0;
+}
+*/
+
+/*
+.shiny-input-container:not(.shiny-input-container-inline){
+  margin-bottom: 0;
+}
+*/
+
+/*
+.main-header .navbar-custom-menu{ 
+  float: right;
+  width: 97%;
+}
+*/
+
+
+/*
+.navbar-nav{
+  float: left;
+  margin: 0;
+  width: 100%;
+}
+*/
+
+/*
+.main-header {
+  position: fixed;
+  width:100%;
+  color: red;
+}
+*/
+
+/*
+.content {
+  padding-top: 60px;
+}
+*/
+
+/*
+.main-sidebar{ 
+  position: fixed;
+}
+*/

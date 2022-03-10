@@ -1,0 +1,150 @@
+---
+title: 'Untitled'
+author: 'Bruno Caneco'
+date: '23/02/2022'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Modules
+
+```{r cars}
+library(shiny)
+library(sCRM)
+
+tbp_wf_App <- function(){
+
+  ui <- shinydashboardPlus::dashboardPage(
+    shinydashboardPlus::dashboardHeader(),
+    shinydashboardPlus::dashboardSidebar(),
+    dashboardBody(
+      mod_pnl_wf_ui('pnl_wf_1')
+      )
+  )
+
+  server <- function(input, output, session) {
+    mod_pnl_wf_server('pnl_wf_1', band_mode = reactive(FALSE))
+  }
+
+  shinyApp(ui, server)
+}
+
+tbp_wf_App()
+```
+
+
+
+```{r}
+library(shiny)
+
+prob_input_app <- function(band_mode){
+  ui <- fluidPage(
+    golem_add_external_resources(),
+    fluidRow(
+      col_6(
+        mod_prob_inputs_ui(
+          "input_1", 
+          pars_lkp = wf_pars_lookup %>% 
+                      filter(par_name %in% c("bld_pitch", "rtn_speed")))
+      )
+    )
+  )
+  
+  server <- function(input, output, session) {
+    
+    mod_prob_inputs_server("input_1", 
+                           pars_lkp = wf_pars_lookup %>% 
+                             filter(par_name %in% c("bld_pitch", "rtn_speed")),
+                           band_mode = band_mode)
+  }
+  
+  shinyApp(ui, server)
+  
+}
+
+prob_input_app(band_mode = TRUE)
+```
+
+
+
+## Functions
+
+### Truncated Normal Density Plots
+```{r}
+tnorm_dplots(mean = 10, sd = 0.2, xlab = "iiei")
+```
+
+
+```{r}
+
+tnorm_qtl_tbl(2, 3, lower =0, upper = Inf, varTag = "jjah", decPlaces = 3)
+
+```
+
+
+
+
+```{r}
+stochLAB::wndspd_rtn_ptch_example %>%
+  area_plot(x = wind_speed, y = rtn_speed, 
+             xlab = "Wind Speed (m/s)", ylab = "Rotation speed (rpm)",
+             point_col = "olivedrab", line_col = "gray", area_col = "olivedrab")
+
+```
+
+
+
+
+
+
+
+```{r}
+startup_wind_avbl %>%
+  tidyr::pivot_longer(cols = everything(), names_to = "month", values_to = "avlb") %>%
+  mutate(month = factor(month, levels = month.name)) %>%
+  lolli_plot(x = month, y = avlb, xlab = "Month", ylab = "Availability", 
+             point_col = "olivedrab", line_col = "gray")
+```
+
+
+
+
+## UI items id tagging conventions
+
+Tags must always be separated by `_`
+
+1. UI element type:
+  - `actionButton` and alike: 'btn_' + *action*, as *action* is inherent to buttons.
+  Choices for *actions*:
+    - 'add', 'rmv', 'upd', 'run', etc.
+  - `tabBox`: 'tbx'
+  - `tabPanel`: 'tbp'
+  - `sidebarMenu`: 'sbm'
+
+2. Section:
+  - Windfarm/turbine scenarios: 'wf'
+  - Species features: 'spp'
+  - Simulation: 'sim'
+
+3. Scenario or species ID, e.g:
+  - Windfarm scenario '1': '1'
+  - Kitiwake: 'kitti'
+
+> NOTE: scenario IDs currently numeric, automatically assigned as scenario is
+added by the client. This is convenient for managing id's based on their recency.
+  
+4. Parameter-level ID, e.g.:
+  - no. turbines: 'n_turb',
+  - bird length: 'lt'
+  
+
+E.g: 'btn_rmv_wf_2': Button that removes the panel for WF scenario 2
+
+
+
+  
+  
+
