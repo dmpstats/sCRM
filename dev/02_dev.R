@@ -33,6 +33,7 @@ usethis::use_package("tidyr")
 usethis::use_package("purrr")
 usethis::use_package("rhandsontable")
 usethis::use_package("rlang")
+usethis::use_package("truncnorm")
 
 usethis::use_dev_package("stochLAB", remote = "HiDef-Aerial-Surveying/stochLAB")
 
@@ -48,6 +49,7 @@ renv::update()
 golem::add_module( name = "tbp_main_wf" ) 
 golem::add_module( name = "prob_inputs" )
 golem::add_module( name = "prob_inputs_row" )
+golem::add_module( name = "trbn_oper" )
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
@@ -57,6 +59,7 @@ golem::add_fct( "wf_feat_inputs" )
 golem::add_fct( "trbn_cfg_inputs" ) 
 golem::add_fct( "input_plots" )
 golem::add_fct( "input_qtiles" ) 
+golem::add_fct( "hacks" ) 
 
 
 

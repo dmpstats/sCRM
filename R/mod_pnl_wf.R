@@ -132,57 +132,7 @@ mod_pnl_wf_ui <- function(id){
               )
             )
           ),
-          shinydashboardPlus::box(
-            title = "Monthly Operation",
-            status = "primary",
-            width = 12,
-            fluidRow(
-              col_11(
-                h5(strong("Maintenance Downtime (%)")),
-                div(class = "hot-monthly",
-                    rhandsontable::rHandsontableOutput(
-                      outputId = ns("hottrbdwnt"),
-                      width = "100%")
-                    )
-              ),
-              col_1(
-                br(),
-                br(),
-                shinyWidgets::dropMenu(
-                  actionButton(ns("trbdwn-plotbtn"), "", icon = icon("chart-area")), 
-                  placement = "left-end",
-                  plotOutput(ns("trbdwnt_plot"),  width = "450px", height = "200px")
-                )
-              )
-            ),
-            hr(),
-            fluidRow(
-              col_11(
-                h5(strong("Operational Wind Availability (%)")),
-                div(class = "hot-monthly",
-                  rhandsontable::rHandsontableOutput(
-                    outputId = ns("hotwndavlb"),
-                    width = "100%")
-                )
-              ),
-              col_1(
-                br(),
-                br(),
-                shinyWidgets::dropMenu(
-                  actionButton(ns("wndavlb-plotbtn"), "", icon = icon("chart-area")), 
-                  placement = "left-end",
-                  plotOutput(ns("wndavlb_plot"),  width = "400px", height = "170px")
-                )
-              )
-            ),
-            hr(),
-            h5(strong("Proportion of Month Operational")),
-            helpText("The difference between wind availability and downtime"), 
-            col_8(
-              offset = 2,
-              plotOutput(ns("opermth_plot"), width = "100%", height = 255)
-            )
-          )
+          mod_trbn_oper_ui(id = ns("trbnoper"))
         )
       )
     )
@@ -193,8 +143,9 @@ mod_pnl_wf_ui <- function(id){
 
 #' pnl_wf Server Functions
 #'
-#' @noRd
 #' @import rhandsontable
+#' 
+#' @noRd
 mod_pnl_wf_server <- function(id, band_mode){
   
   stopifnot(is.reactive(band_mode))
@@ -204,8 +155,6 @@ mod_pnl_wf_server <- function(id, band_mode){
     
     rv <- reactiveValues(
       rtn_ptch_wnd_df = stochLAB::wndspd_rtn_ptch_example,
-      trb_downtime_df = startup_trb_dwntm,
-      wind_avlb_df = startup_wind_avbl
     )
     
     
@@ -224,7 +173,9 @@ mod_pnl_wf_server <- function(id, band_mode){
       band_mode = band_mode
     )
     
-    
+    # Monthly Operation panel
+    mod_trbn_oper_server(id = "trbnoper", band_mode = band_mode)
+
     
     # --- Rotation and pitch vs wind speed relationship -------------------------
     
@@ -269,169 +220,6 @@ mod_pnl_wf_server <- function(id, band_mode){
                   xlab = "Wind Speed (m/s)", ylab = "Blade Pitch (deg)",
                   point_col = "olivedrab", line_col = "gray", area_col = "olivedrab")
     })
-    
-    
-    # --- Turbine Downtime -----------------------------------------------------
-    
-    # Input table
-    output$hottrbdwnt <- renderRHandsontable({
-      
-      if(band_mode() == FALSE){
-        
-        rv$trb_downtime_df %>%
-          rhandsontable(
-            rowHeaders = c(
-              "Mean", 
-              "SD"),
-            rowHeaderWidth = 75
-          ) %>%
-          hot_cols(colWidths = 78, 
-                   renderer = "function (instance, td, row, col, prop, value, cellProperties) {
-           Handsontable.renderers.NumericRenderer.apply(this, arguments);
-               if (value == null || value.length === 0) {
-               td.style.background = 'pink';
-               }}") %>%
-          hot_table(highlightCol = TRUE, highlightRow = TRUE) %>%
-          hot_context_menu(allowRowEdit = FALSE, allowColEdit = FALSE)
-        
-      }else{
-        rv$trb_downtime_df %>%
-          slice(1) %>%
-          rhandsontable(
-            rowHeaders = NULL
-          ) %>%
-          hot_cols(colWidths = 78, 
-                   renderer = "function (instance, td, row, col, prop, value, cellProperties) {
-           Handsontable.renderers.NumericRenderer.apply(this, arguments);
-               if (value == null || value.length === 0) {
-               td.style.background = 'pink';
-               }}") %>%
-          hot_table(highlightCol = TRUE, highlightRow = TRUE) %>%
-          hot_context_menu(allowRowEdit = FALSE, allowColEdit = FALSE)
-      }
-    })
-    
-
-    output$trbdwnt_plot <- renderPlot({
-      
-      req(input$hottrbdwnt)
-      
-      #browser()
-      if(band_mode() == FALSE){
-      
-      hot_to_r(input$hottrbdwnt) %>% 
-        tibble::rownames_to_column(var="Variable") %>% 
-        tidyr::pivot_longer(January:December) %>% 
-        tidyr::pivot_wider(names_from = Variable) %>%
-        dplyr::mutate(
-          month = factor( month.abb, levels = month.abb),
-          lwBound = msm::qtnorm(p = 0.025, Mean, SD, lower = 0),
-          upBound = msm::qtnorm(p = 0.975, Mean, SD, lower = 0)
-          ) %>%
-        ggplot2::ggplot(aes(x=month, y = Mean, group=month)) +
-        ggplot2::geom_pointrange(aes(ymin=lwBound, ymax=upBound), col = "olivedrab", size =0.8) +
-        ggplot2::labs(y = "Downtime (%)", x = "", title = "Monthly turbine downtime (Means & 95% CIs)")
-        
-      }else{
-        
-        hot_to_r(input$hottrbdwnt) %>% 
-          tidyr::pivot_longer(cols = everything(), names_to = "month", values_to = "dwnt") %>%
-          dplyr::mutate(month = factor( month.abb, levels = month.abb)) %>%
-          lolli_plot(x = month, y = dwnt, 
-                     xlab = "", ylab = "Downtime (%)", 
-                     point_col = "olivedrab", line_col = "gray")
-      }
-      
-    })  
-    
-    
-    
-    # --- Wind Availability   --------------------------------------------------
-    
-    # -- Input data
-    output$hotwndavlb <- renderRHandsontable({
-      
-      rv$wind_avlb_df %>%
-        rhandsontable(rowHeaders = NULL) %>%
-        hot_cols(colWidths = 78, 
-                 renderer = "function (instance, td, row, col, prop, value, cellProperties) {
-           Handsontable.renderers.NumericRenderer.apply(this, arguments);
-               if (value == null || value.length === 0) {
-               td.style.background = 'pink';
-               }}") %>%
-        hot_table(highlightCol = TRUE, highlightRow = TRUE) %>%
-        hot_context_menu(allowRowEdit = FALSE, allowColEdit = FALSE)
-    })
-    
-    # -- Plot
-    output$wndavlb_plot <- renderPlot({
-      
-      req(input$hotwndavlb)
-      
-      hot_to_r(input$hotwndavlb) %>% 
-        tidyr::pivot_longer(cols = everything(), names_to = "month", values_to = "avlb") %>%
-        dplyr::mutate(month = factor( month.abb, levels = month.abb)) %>%
-        lolli_plot(x = month, y = avlb, 
-                   xlab = "", ylab = "Wind Availability (%)", 
-                   point_col = "olivedrab", line_col = "gray")
-    })
-    
-    
-    
-    # --- Monthly Operational time ---------------------------------------------
-    
-    # plot
-    output$opermth_plot <- renderPlot({
-      
-      req(input$hotwndavlb, input$hottrbdwnt)
-      
-      wndavlb <- hot_to_r(input$hotwndavlb) %>% 
-        tidyr::pivot_longer(cols = everything(), values_to = "avlb")
-      
-      if(band_mode() == FALSE){
-        
-        hot_to_r(input$hottrbdwnt) %>% 
-          tibble::rownames_to_column(var="Variable") %>% 
-          tidyr::pivot_longer(January:December) %>% 
-          tidyr::pivot_wider(names_from = Variable) %>%
-          dplyr::left_join(wndavlb, by = "name") %>%
-          dplyr::mutate(
-            month = factor( month.abb, levels = month.abb),
-            prop_oper_mean = 0.01 * (avlb - Mean),
-            prop_oper_lwb = 0.01 * (avlb - msm::qtnorm(p = 0.025, Mean, SD, lower = 0)),
-            prop_oper_upb = 0.01 * (avlb - msm::qtnorm(p = 0.975, Mean, SD, lower = 0))
-          ) %>%
-          ggplot2::ggplot(aes(x=month, y = prop_oper_mean, group=month)) +
-          ggplot2::geom_pointrange(aes(ymin = prop_oper_lwb, ymax = prop_oper_upb), 
-                                   col = "olivedrab", size =0.8) +
-          ggplot2::labs(y = "Proportion of month operational", x = "")
-          
-      }else{
-        
-        hot_to_r(input$hottrbdwnt) %>%
-          slice(1) %>%
-          tidyr::pivot_longer(cols = everything(), values_to = "dwnt") %>%
-          dplyr::left_join(wndavlb, by = "name") %>%
-          dplyr::mutate(
-            month = factor( month.abb, levels = month.abb),
-            prop_oper_mean = 0.01 * (avlb - dwnt)
-            ) %>%
-          lolli_plot(x = month, y = prop_oper_mean,
-                     xlab = "", ylab = "Proportion of month operational",
-                     point_col = "olivedrab", line_col = "gray")
-      }
-    })
-    
-
-    
-    
-    # output$plot2 <- renderPlot({
-    #   shinipsum::random_ggplot(type = "col") + 
-    #     labs(title = "Random plot 2") + 
-    #     theme_bw()
-    # })
-    
-  
   })
 }
 

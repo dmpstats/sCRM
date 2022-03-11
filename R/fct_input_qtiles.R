@@ -1,5 +1,5 @@
 #' ------------------------------------------------------------ #
-#' -----     Functions for outputing quantiles            ------
+#' -----     Functions for outputing quantile summaries    ------
 #' ------------------------------------------------------------ #
 
 #' Function for Truncated Normal density quantiles of model input parameters
@@ -35,6 +35,8 @@ tnorm_qtl_tbl <- function(mean, sd, lower = -Inf, upper = Inf, varTag, decPlaces
   }
   
 }
+
+
 
 
 
