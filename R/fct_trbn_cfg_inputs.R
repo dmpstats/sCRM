@@ -13,8 +13,8 @@
 #'
 #' @return No returned value.
 #'
-trbn_cfg_inputs <- function(ns, inputs_width = "100%"){
-
+trbn_cfg_inputs <- function(ns, inputs_width = "100%", is_demo = FALSE){
+  
   tagList(
   
     # ---- Number of blades
@@ -22,9 +22,9 @@ trbn_cfg_inputs <- function(ns, inputs_width = "100%"){
       width = inputs_width,
       inputId = ns("nblades"),
       label = "No. of Blades",
-      value = NULL, #startUpValues$turbinePars$numBlades, 
-      min = 1),
-    
+      value = if(is_demo) 3 else NULL,
+      min = 1, 
+      step = 1),
     
     
     # ---- Rotor radius
@@ -32,9 +32,9 @@ trbn_cfg_inputs <- function(ns, inputs_width = "100%"){
       width = inputs_width,
       inputId = ns("rtradius"), 
       label =  "Rotor Radius (m)",
-      value = NULL, #startUpValues$turbinePars$rotorRadius, 
-      min = 1, step = 0.1),
-    
+      value = if(is_demo) 50 else NULL, 
+      min = 1, 
+      step = 0.1),
     
     
     # ---- Air Gap
@@ -42,17 +42,19 @@ trbn_cfg_inputs <- function(ns, inputs_width = "100%"){
       width = inputs_width, 
       inputId = ns("airgap"),
       label =  "Air Gap (m)",
-      value = NULL, #startUpValues$turbinePars$airGap,
-      min = 1, step = 0.5),
+      value = if(is_demo) 25.5 else NULL,
+      min = 1,
+      step = 0.1),
     
     
-    
-    # Maximum blade width
+    # --- Maximum blade width
     numericInput(
       width = inputs_width, 
       inputId = ns("bladewth"), # "numInput_turbinePars_maxBladeWdth",
       label =  "Max Blade Width (m)",
-      value = NULL, #startUpValues$turbinePars$maxBladeWdth, 
-      min = 1, step = 0.1)
+      value = if(is_demo) 5.5 else NULL,
+      min = 1,
+      step = 0.1)
+    
   )
 }

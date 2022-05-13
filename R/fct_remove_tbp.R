@@ -1,13 +1,17 @@
 #' Remove parent `tabPanel` of a clicked button (server function)
 #'
 #' @description Removes tabpanel of clicked "-" button and selects latest
-#'   tabPanel as active
+#'   tabPanel as active. #'
 #'
-#' @param btn_tags character vector, each element a tag composing the button id
-#' @param valid_inputs_ids character vector with valid ui input ids
+#' @param btn_tags character vector, each element a tag composing the button id.
+#'   IDs expected to follow the convention `btn-'action'-'section'-'section id'`.
+#'   E.g. the button for removing the 3rd wind farm scenario expected to be
+#'   `btn-rmv-wf-3`
+#'
+#' @param valid_inputs_ids character vector with input ids of active buttons
 #'
 #' @return No returned value
-#' 
+#'   
 remove_tbp <- function(btn_tags, valid_inputs_ids){
   
   action <- btn_tags[2]
@@ -45,5 +49,5 @@ remove_tbp <- function(btn_tags, valid_inputs_ids){
   
   # assign NULL for value of button removing the panel
   shinyjs::runjs(paste0("Shiny.onInputChange('", btn_id,"',null)"))
-  
+
 }

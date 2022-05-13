@@ -7,8 +7,11 @@
 #' @noRd 
 #'
 #' @import shiny
-mod_prob_inputs_ui <- function(id, pars_lkp){
+mod_prob_inputs_ui <- function(id, pars_lkp, band_mode){
+  
   ns <- NS(id)
+  
+  #browser()
   
   tagList(
     
@@ -17,14 +20,14 @@ mod_prob_inputs_ui <- function(id, pars_lkp){
       #id = "tbl-prob-dist-inputs",
       tags$tr(
         tags$th(
-          style = "width: 40%; padding-bottom: 5px; text-align: left;",
+          style = "width: 35%; padding-bottom: 5px; text-align: left;",
           "",
           ),
         tags$th(
-          style = "width: 28%; padding-bottom: 5px;",
+          style = "width: 30%; padding-bottom: 5px;",
           "Mean"),
         tags$th(
-          style = "width: 28%; padding-bottom: 5px;",
+          style = "width: 30%; padding-bottom: 5px;",
           "SD"),
         tags$th(
           style = "width: 5%; padding-bottom: 5px; text-align: left;",
@@ -33,38 +36,57 @@ mod_prob_inputs_ui <- function(id, pars_lkp){
       ),
       # insert rows with parameters for each input, and distribution display
       tagList(
-        purrr::pmap(pars_lkp, function(par_id, par_label, dflt_mean, dflt_sd, ...){
+        purrr::pmap(pars_lkp, function(par_id, par_label, par_dist, dflt_mean, dflt_sd, ...){
           mod_prob_inputs_row_ui(
             id = ns(par_id), 
-            par_label = par_label, 
+            par_label = par_label,
+            par_dist = par_dist,
             dflt_mean = dflt_mean, 
-            dflt_sd = dflt_sd
+            dflt_sd = dflt_sd,
+            band_mode = band_mode
           )
         })
       )
     )
   )
 }
-    
+
 
 #' prob_inputs Server Functions
 #'
 #' @noRd 
-mod_prob_inputs_server <- function(id, pars_lkp, band_mode){
+mod_prob_inputs_server <- function(id, pars_lkp, band_mode, 
+                                   plot_fill = "olivedrab"){
   
   stopifnot(is.reactive(band_mode))
+  stopifnot(!is.reactive(pars_lkp))
+  stopifnot(!is.reactive(plot_fill))
   
   moduleServer( id, function(input, output, session){
     ns <- session$ns
-
+    
+    iv <- InputValidator$new()
+    
+    # Generate module server for each row (i.e. parameter) AND add child
+    # validator to module's InputValidator object
     purrr::pwalk(pars_lkp, function(par_id, par_label, par_dist, par_name, ...){
-      mod_prob_inputs_row_server(
+      
+      prob_input_row_result <- mod_prob_inputs_row_server(
         id = par_id,
         par_label = par_label,
         par_dist = par_dist,
         par_name = par_name, 
-        band_mode = band_mode)
+        band_mode = band_mode, 
+        plot_fill = plot_fill)
+      
+      iv$add_validator(prob_input_row_result$iv)
     })
+    
+
+    # return InputValidator object
+    list(
+      iv = iv
+    )
     
   })
 }

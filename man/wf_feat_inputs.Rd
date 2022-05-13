@@ -4,11 +4,13 @@
 \alias{wf_feat_inputs}
 \title{Insert winfarm features inputs}
 \usage{
-wf_feat_inputs(ns = ns, inputs_width = "100\%")
+wf_feat_inputs(ns = ns, inputs_width = "100\%", is_demo = FALSE)
 }
 \arguments{
 \item{inputs_width}{character string, the width of the numeric input, e.g. '400px',
 or '100\%'.}
+
+\item{startup_vals}{a list object}
 }
 \value{
 No returned value.

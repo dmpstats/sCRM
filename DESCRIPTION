@@ -9,15 +9,19 @@ Imports:
     bs4Dash,
     bsplus,
     config (>= 0.3.1),
+    distributional,
     dplyr,
     DT,
     fresh,
+    ggdist,
     ggplot2,
+    ggridges,
     glue,
     golem (>= 0.3.1),
     htmltools,
     magrittr,
     markdown,
+    MetBrewer,
     msm,
     pkgload,
     processx,
@@ -28,12 +32,17 @@ Imports:
     shiny (>= 1.6.0),
     shinydashboard,
     shinydashboardPlus,
+    shinyFeedback,
     shinyjs,
+    shinyvalidate,
     shinyWidgets,
     stochLAB (>= 1.0.0),
     thinkr,
     tidyr,
-    truncnorm
+    tools,
+    truncnorm,
+    vroom,
+    zeallot
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2

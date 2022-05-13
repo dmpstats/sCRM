@@ -5,7 +5,7 @@
 \alias{startup_wind_avbl}
 \title{Startup values for monthly operational wind availability}
 \format{
-A dataframe with 1 row and 12 columns
+A dataframe with 1 row and 12 columns.
 
 \describe{
 \item{January}{The percentage of January during which operational wind conditions}
