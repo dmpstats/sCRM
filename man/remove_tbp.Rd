@@ -7,14 +7,17 @@
 remove_tbp(btn_tags, valid_inputs_ids)
 }
 \arguments{
-\item{btn_tags}{character vector, each element a tag composing the button id}
+\item{btn_tags}{character vector, each element a tag composing the button id.
+IDs expected to follow the convention \code{btn-'action'-'section'-'section id'}.
+E.g. the button for removing the 3rd wind farm scenario expected to be
+\code{btn-rmv-wf-3}}
 
-\item{valid_inputs_ids}{character vector with valid ui input ids}
+\item{valid_inputs_ids}{character vector with input ids of active buttons}
 }
 \value{
 No returned value
 }
 \description{
 Removes tabpanel of clicked "-" button and selects latest
-tabPanel as active
+tabPanel as active. #'
 }

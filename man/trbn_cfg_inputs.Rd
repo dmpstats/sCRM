@@ -4,7 +4,7 @@
 \alias{trbn_cfg_inputs}
 \title{Insert inputs for turbine configuration parameters (UI function)}
 \usage{
-trbn_cfg_inputs(ns, inputs_width = "100\%")
+trbn_cfg_inputs(ns, inputs_width = "100\%", is_demo = FALSE)
 }
 \arguments{
 \item{inputs_width}{character string, the width of the numeric input, e.g. '400px',

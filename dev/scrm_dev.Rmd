@@ -18,15 +18,17 @@ library(sCRM)
 tbp_wf_App <- function(){
 
   ui <- shinydashboardPlus::dashboardPage(
+    
     shinydashboardPlus::dashboardHeader(),
     shinydashboardPlus::dashboardSidebar(),
     dashboardBody(
-      mod_pnl_wf_ui('pnl_wf_1')
-      )
+      golem_add_external_resources(),
+      mod_pnl_wf_ui('wf-1', is_demo = TRUE, band_mode = FALSE)
+    )
   )
 
   server <- function(input, output, session) {
-    mod_pnl_wf_server('pnl_wf_1', band_mode = reactive(FALSE))
+    mod_pnl_wf_server('wf-1', band_mode = reactive(FALSE), is_demo = TRUE)
   }
 
   shinyApp(ui, server)
@@ -40,51 +42,298 @@ tbp_wf_App()
 ```{r}
 library(shiny)
 
-prob_input_app <- function(band_mode){
+turb_oper_app <- function(){
+  
   ui <- fluidPage(
     golem_add_external_resources(),
-    fluidRow(
-      col_6(
-        mod_prob_inputs_ui(
-          "input_1", 
-          pars_lkp = wf_pars_lookup %>% 
-                      filter(par_name %in% c("bld_pitch", "rtn_speed")))
-      )
-    )
+    
+    mod_trbn_oper_ui(id = "toper_test"),
   )
   
   server <- function(input, output, session) {
     
-    mod_prob_inputs_server("input_1", 
-                           pars_lkp = wf_pars_lookup %>% 
-                             filter(par_name %in% c("bld_pitch", "rtn_speed")),
-                           band_mode = band_mode)
+    mod_trbn_oper_server(
+      id = "toper_test",
+      band_mode = reactive(FALSE),
+      is_demo = TRUE
+      )
   }
   
   shinyApp(ui, server)
   
 }
 
-prob_input_app(band_mode = TRUE)
+turb_oper_app()
 ```
+
+
+
+
+```{r}
+library(shiny)
+
+prob_input_app <- function(){
+  ui <- fluidPage(
+    
+    golem_add_external_resources(),
+    
+    fluidRow(
+      col_6(
+        mod_prob_inputs_ui(
+          id = "input_1", 
+          #pars_lkp = spp_biopars_lookup
+          pars_lkp = wf_pars_lookup %>%
+            filter(par_name %in% c("bld_pitch", "rtn_speed"))
+        )
+          
+      )
+    )
+  )
+  
+  server <- function(input, output, session) {
+    
+    mod_prob_inputs_server(
+      id = "input_1", 
+      pars_lkp = wf_pars_lookup %>%
+                    filter(par_name %in% c("bld_pitch", "rtn_speed")),
+      #pars_lkp = spp_biopars_lookup,
+      band_mode = reactive(TRUE)
+    )
+  }
+  
+  shinyApp(ui, server)
+  
+}
+
+prob_input_app()
+```
+
+
+
+
+
+```{r}
+
+library(shiny)
+
+test_app <- function(determ){
+  ui <- fluidPage(
+    golem_add_external_resources(),
+    mod_test_ui(id = "test_1")
+  )
+  
+  server <- function(input, output, session) {
+    mod_test_server("test_1", determ = determ)
+  }
+  
+  shinyApp(ui, server)
+  
+}
+
+test_app(determ = reactive(TRUE))
+
+```
+
+
+
+
+
+```{r}
+library(shiny)
+
+spp_pnl_app <- function(){
+  
+  # 
+  #  ui <- shinydashboardPlus::dashboardPage(
+  #   
+  #   shinydashboardPlus::dashboardHeader(),
+  #   shinydashboardPlus::dashboardSidebar(),
+  #   dashboardBody(
+  #     golem_add_external_resources(),
+  #     mod_pnl_wf_ui('wf-1', is_demo = TRUE, band_mode = FALSE)
+  #   )
+  # )
+  #  
+  #  
+   
+  ui <- fluidPage(
+    
+    golem_add_external_resources(),
+    
+    fluidRow(
+      column(
+        12,
+        mod_pnl_spp_ui(
+          id = "Common_Guillemot", 
+          spp_label = "Common Guillemot",
+          band_mode = FALSE)
+      )
+    )
+  )
+  
+  server <- function(input, output, session) {
+    
+    mod_pnl_spp_server(
+      id = "Common_Guillemot", 
+      spp_label = "Common Guillemot", 
+      band_mode = reactive(FALSE))
+  }
+  
+  shinyApp(ui, server)
+  
+}
+
+spp_pnl_app()
+
+```
+
+
+
+
+
+```{r}
+library(shiny)
+
+spp_in_wf_app <- function(){
+  
+  ui <- fluidPage(
+    golem_add_external_resources(),
+    
+    mod_spp_in_wf_ui(id = "pnl-sppinwf-tavira"),
+  )
+  
+  server <- function(input, output, session) {
+    
+    mod_spp_in_wf_server(
+      id = "pnl-sppinwf-tavira",
+      band_mode = reactive(TRUE), 
+      wf_label = "Tavira"
+      )
+  }
+  
+  shinyApp(ui, server)
+  
+}
+
+spp_in_wf_app()
+```
+
+
+
+```{r}
+library(shiny)
+library(shinydashboard)
+
+completeness_app <- function(){
+  
+   ui <- shinydashboardPlus::dashboardPage(
+    
+    shinydashboardPlus::dashboardHeader(),
+    shinydashboardPlus::dashboardSidebar(),
+    dashboardBody(
+      golem_add_external_resources(),
+      fluidRow(
+        col_3(
+          shinyWidgets::progressBar(
+            id = "pb42",
+            value = 20,
+            #display_pct = TRUE,
+            size = "sm",
+            status = "danger",
+            striped = FALSE,
+            title = "Completeness",
+            commas = TRUE
+          ),
+          p("y missing x errors(s)")
+        )
+      ),
+      fluidRow(
+        col_3(
+          p(strong("Completeness")),
+          flexdashboard::gaugeOutput("gauge", width = "50%")
+        )
+      )
+    )
+  )
+
+  server <- function(input, output, session) {
+    
+    output$gauge <- flexdashboard::renderGauge({
+      
+      flexdashboard::gauge(
+        value = 42, 
+        min = 0, 
+        max = 100, 
+        symbol = '%', 
+        label = "y missing\nx error(s)",
+        flexdashboard::gaugeSectors(
+          success = c(80, 100), warning = c(40, 79), danger = c(0, 39)
+        ))
+      
+    })
+  
+  }
+  
+  
+  shinyApp(ui, server)
+  
+}
+
+completeness_app()
+```
+
+
+
+
+
 
 
 
 ## Functions
 
-### Truncated Normal Density Plots
+### Density Plots
 ```{r}
-tnorm_dplots(mean = 10, sd = 0.2, xlab = "iiei")
+# Truncated Normal 
+tnorm_dplot(mean = 0, sd = 0.5, xlab = "iiei", lower = 0)
+tnorm_dplot(mean = 0.3, sd = .2, xlab = "iiei", lower = 0)
+
+
+# Beta
+beta_dplot(p = 1.1, sd = .05, xlab = "test")
 ```
 
 
+### Quantile Tables
 ```{r}
-
 tnorm_qtl_tbl(2, 3, lower =0, upper = Inf, varTag = "jjah", decPlaces = 3)
 
+beta_qtl_tbl(p = 1, sd = 0.01, varTag = "gfdhs")
 ```
 
 
+
+```{r}
+string <- "abcefg ggafsffs ggggaggsh"
+n <- 4
+
+which(1:nchar(string) %% 2 == 0)
+
+
+letter <- '<br/>'
+lhs <- sprintf('^([a-z]{%d})([a-z]+)$', n-1) 
+rhs <- paste0('\\1', letter, '\\2')
+gsub(lhs, rhs, string)
+
+```
+
+
+
+
+
+
+
+
+## Plots
 
 
 ```{r}
@@ -97,10 +346,6 @@ stochLAB::wndspd_rtn_ptch_example %>%
 
 
 
-
-
-
-
 ```{r}
 startup_wind_avbl %>%
   tidyr::pivot_longer(cols = everything(), names_to = "month", values_to = "avlb") %>%
@@ -108,6 +353,69 @@ startup_wind_avbl %>%
   lolli_plot(x = month, y = avlb, xlab = "Month", ylab = "Availability", 
              point_col = "olivedrab", line_col = "gray")
 ```
+
+
+
+
+
+```{r}
+fhd_boots_heatmap(
+  data = stochLAB::generic_fhd_bootstraps$Black_legged_Kittiwake,
+    height = height, 
+    spp_label = "kittiwakinacio"
+    )
+
+
+```
+
+
+
+```{r}
+
+dt <- monthDens_pctls_template %>%
+  mutate(across(January:December, .fns = ~qtnorm(p = Percentiles/100, mean = 3, sd = 1))) 
+
+dt[, 2:13] <- dt[, 2:13] * matrix(1:12, nrow = 11, ncol = 12, byrow = TRUE)
+
+
+densbird_pctl_plot(dt, pctl = Percentiles, spp_label = "kittuioioh")
+
+dt %>%
+  select(-c(May, September, November)) %>%
+  densbird_pctl_plot(pctl = Percentiles, spp_label = "usujdbld")
+
+
+dt %>%
+  mutate(January = January[c(1:3, NA, 5:n())]) %>%
+  densbird_pctl_plot(pctl = Percentiles, spp_label = "usujdbld")
+
+
+dt %>%
+  filter(Percentiles %in% c(2.5, 10, 75, 99)) %>%
+  densbird_pctl_plot(pctl = Percentiles, spp_label = "boo")
+
+
+```
+
+
+
+```{r}
+dt <- sapply(rnorm(12, 12, 6), function(x){
+  rtnorm(1000, mean = x, sd = 1, lower = 0)
+}) %>% 
+  as_tibble() %>%
+  rename_with(.fn = ~month.name)
+
+
+densbird_draws_plot(
+  data = dt, 
+  spp_label = "gfdjkd"
+)
+```
+
+
+
+
 
 
 
@@ -123,6 +431,8 @@ Tags must always be separated by `_`
   - `tabBox`: 'tbx'
   - `tabPanel`: 'tbp'
   - `sidebarMenu`: 'sbm'
+  - `menuSubItem`: 'msi'
+  - `selectizeInpu`: 'sltz'
 
 2. Section:
   - Windfarm/turbine scenarios: 'wf'

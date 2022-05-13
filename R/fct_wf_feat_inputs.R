@@ -9,22 +9,21 @@
 #'  - Blade width
 #' 
 #' @param inputs_width character string, the width of the numeric input, e.g. '400px',
-#'   or '100%'.
+#'   or '100%'.   
+#' @param startup_vals a list object
 #'
 #' @return No returned value.
-#' 
 
-wf_feat_inputs <- function(ns = ns, inputs_width = "100%"){
-  
+wf_feat_inputs <- function(ns = ns, inputs_width = "100%", is_demo = FALSE){
+
   tagList(
     
-    #splitLayout(
     # --- Number of Turbines
     numericInput(
       width = inputs_width,
       inputId = ns("nturb"),
-      label = "Number of turbines",
-      value = NULL, # startUpValues$windFarmPars$windfarmPars_nTurbines,
+      label = "Number of Turbines",
+      value = if(is_demo) 100 else NULL,
       min = 1,
       step = 1),
 
@@ -33,7 +32,7 @@ wf_feat_inputs <- function(ns = ns, inputs_width = "100%"){
       width = inputs_width,
       inputId = ns("lat"),
       label = "Latitude (deg)", #label.help("Latitude (deg)", "lbl_windfarmLatitude"),
-      value = NULL, #startUpValues$windFarmPars$windfarmPars_Latitude,
+      value = if(is_demo) 56.3 else NULL, 
       min = -90,
       max = 90,
       step = 0.01),
@@ -43,7 +42,7 @@ wf_feat_inputs <- function(ns = ns, inputs_width = "100%"){
       width = inputs_width,
       inputId = ns("wfwidth"),
       label = "Width (Km)", #label.help("Width (Km)", "lbl_windfarmWidth"),
-      value = NULL, #startUpValues$windFarmPars$windfarmPars_width,
+      value = if(is_demo) 12 else NULL, #startup_vals$wf_width,
       min = 1,
       step = 1),
 
@@ -51,9 +50,9 @@ wf_feat_inputs <- function(ns = ns, inputs_width = "100%"){
     numericInput(
       width = inputs_width,
       inputId = ns("tdloffset"),
-      label = "Tidal offset (m)", #label.help("Tidal Offset (m)", "lbl_tidalOffset"),
-      value = NULL, #startUpValues$windFarmPars$tidalOffset,
-      min = 0, step = 0.1)
-    #)
+      label = "Tidal Offset (m)", #label.help("Tidal Offset (m)", "lbl_tidalOffset"),
+      value = if(is_demo) 2.1 else NULL, #startup_vals$tidal_offset,
+      min = 0, 
+      step = 0.1)
   )
 }

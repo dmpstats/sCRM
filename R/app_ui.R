@@ -7,13 +7,16 @@
 #' @import fresh
 #' @noRd
 app_ui <- function(request) {
-  
-  theme_set(theme_bw())
+
+
+  ggplot2::theme_set(theme_scrm())
   
   tagList(
     
     # Leave this function for adding external resources
     golem_add_external_resources(),
+    
+    tags$style("@import url(https://use.fontawesome.com/releases/v6.0.0/css/all.css);"),
     
     # Your application UI logic 
     shinydashboardPlus::dashboardPage(
@@ -38,7 +41,7 @@ app_ui <- function(request) {
               inline = TRUE,
               #width = "250px", 
               labelWidth = "50px", 
-              handleWidth = "80px",
+              handleWidth = "110px",
               label = strong(" Mode"),
               onStatus = "warning", 
               offStatus = "info", 
@@ -88,24 +91,33 @@ app_ui <- function(request) {
         
         sidebarMenu(
           id = "sidebarmenu",
+          style = "white-space: normal;", # required to stop long names to spill beyond sidebar
+          
+          # Winfarms Section
           menuItem(
             tabName = "sbm-wf",
-            text = "Step 1: Wind Farm scenarios",
+            text = strong("Step 1: Windfarm Scenarios"),
             icon = icon("fan")
           ),
+          
+          # Species in Windfarms Section
           menuItem(
             tabName = "sbm-spp",
-            text = "Step 2: Species features",
-            icon = icon("crow") #icon("swift") #icon("earlybirds")
+            text = strong("Step 2: Species at Windfarm"),
+            icon = icon("crow"), #, #icon("swift") #icon("earlybirds"),
+            menuItemOutput("subItems_spps_in_wf")
           ),
+          
+          # Simulation Section
           menuItem(
             tabName = "sbm-sim",
-            text = "Step 3: Simulation & Results",
+            text = strong("Step 3: Simulation & Results"),
             icon = icon("laptop-code")
           )
+          
         )
         
-        # # Perhaps include the following at tge bottom of the sidebar?
+        # # Perhaps include the following at the bottom of the sidebar?
         # fluidRow(
         #   column(
         #     align='center',
@@ -120,48 +132,45 @@ app_ui <- function(request) {
       shinydashboard::dashboardBody(
         
         fresh::use_theme("inst/app/www/scrm-custom-theme.css"),
+
+        # use_theme(
+        #   create_theme(
+        #     theme = "default",
+        #     bs_vars_progress(
+        #       border_radius = "15px",
+        #     ),
+        #     output_file = NULL
+        #   )
+        # ),
+        
         
         # dashboardthemes::shinyDashboardThemes(
         #   theme = "grey_light"
         # ),
         
-        # br(),
-        # br(),
-        # br(),
 
-        tabItems(
+        #tabItems(
+        div(class="tab-content", id="tabItemsEnvelope",  # required as reference to the dynamic UI tab for each species via insertUI()
     
-          # Windfarm Scenarios
+          # Windfarms Section
           tabItem(
             tabName = "sbm-wf",
-            #br(),
-            shinydashboard::tabBox(
-              id = "tbx-wf",
-              width = 12,
-              # title contains buttons to append additional tabPanels
-              title = add_scn_btns(
-                btn_add_id = "btn-add-wf", 
-                drpdwn_btn_id = "btn-upld-wf-scenarios",
-                dwnl_btn_id = "dt-wf-inputs-tmpl",
-                file_input_id = "flinput-wf-inputs"),
-              
-              # TabPanel default scenario
-              tabPanel(
-                title = strong("Scenario 1"),
-                value = "tbp-wf-1",
-                wellPanel(
-                  h4(strong("Wind farm scenario 1")),
-                  fluidRow(mod_pnl_wf_ui("pnl-wf-1"))
-                )
+            
+            fluidRow(
+              shinydashboard::tabBox(
+                id = "tbx-wf",
+                width = 12,
+                height =  "100%",
+                
+                # title contains buttons to append additional tabPanels for each windfarm
+                title = add_wf_btns(
+                  dpdn_add_wf_id ="drpdwn-add-wf", 
+                  sltz_wf_id = "active-wfs",
+                  dpdn_close_id = "drpdwn-close",
+                  dpdn_upld_wf_id = "btn-upld-wf",
+                  dwnl_btn_id = "dt-wf-inputs-tmpl",
+                  file_input_id = "flinput-wf-inputs")
               )
-            )
-          ),
-          
-          # Species Features
-          tabItem(
-            tabName = "sbm-spp",
-            box(
-              title = "Species Stuff"
             )
           ),
           
@@ -198,6 +207,31 @@ golem_add_external_resources <- function(){
     'www', app_sys('app/www')
   )
   
+  jsCode <- '
+    shinyjs.backgroundCol = function(params) {
+      var defaultParams = {
+        id : null,
+        col : "red"
+      };
+      params = shinyjs.getParams(params, defaultParams);
+
+      var el = $("#" + params.id);
+      el.css("background-color", params.col);
+    }
+    
+    shinyjs.fontCol = function(params) {
+      var defaultParams = {
+        id : null,
+        col : "red"
+      };
+      params = shinyjs.getParams(params, defaultParams);
+
+      var el = $("#" + params.id);
+      el.css("color", params.col);
+    }
+  
+  '
+  
   tags$head(
     favicon(ext = 'png'),
     bundle_resources(
@@ -208,8 +242,12 @@ golem_add_external_resources <- function(){
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
     shinyjs::useShinyjs(),
+    #shinyjs::extendShinyjs(script = "shinyjs_funcs.js", functions = c("backgroundCol")),
+    shinyjs::extendShinyjs(text = jsCode, functions = c("backgroundCol", "fontCol")),
     bsplus::use_bs_tooltip(),
-    bsplus::use_bs_popover()
+    bsplus::use_bs_popover(),
+    
+    shinyFeedback::useShinyFeedback()
     
   )
 }
