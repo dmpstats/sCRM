@@ -19,7 +19,7 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo){
   
   tagList(
     
-    tags$script("$(function () {$('[data-toggle=\"popover\"]').popover()})"),
+    # tags$script("$(function () {$('[data-toggle=\"popover\"]').popover()})"),
     
     # Trick with hidden textInput to allow shinyvalidate on rhandsontable
     shinyjs::hidden(

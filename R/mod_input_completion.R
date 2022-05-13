@@ -21,7 +21,7 @@ mod_input_completion_ui <- function(id){
             size = "xs",
             status = "success",
             striped = FALSE,
-            title = "Completion"
+            title = "Completion Status"
           ),
           class = "pb-inputcompletion"
         )

@@ -23,6 +23,7 @@ Imports:
     markdown,
     MetBrewer,
     msm,
+    patchwork,
     pkgload,
     processx,
     purrr,

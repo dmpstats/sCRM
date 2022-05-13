@@ -43,6 +43,7 @@ usethis::use_package("ggridges")
 usethis::use_package("zeallot")
 usethis::use_package("ggdist")
 usethis::use_package("distributional")
+usethis::use_package("patchwork")
 
 
 usethis::use_dev_package("stochLAB", remote = "HiDef-Aerial-Surveying/stochLAB")

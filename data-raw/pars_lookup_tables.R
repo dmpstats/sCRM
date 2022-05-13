@@ -239,25 +239,6 @@ usethis::use_data(spp_dflts, overwrite = TRUE)
 
 
 
-stochLAB::generic_fhd_bootstraps$Little_Gull %>%
-  tidyr::pivot_longer(cols = bootId_1:bootId_200) %>%
-  dplyr::group_by(height) %>%
-  dplyr::summarise(
-    mean = mean(value), 
-    median = median(value), 
-    lcl = quantile(value, probs = 0.025), 
-    ucl = quantile(value, probs = 0.975)
-    )
-
-Johnston_fhd_est$Little_Gull
-
-
-readr::read_table("c:/Users/bruno/Desktop/Flight Height Bootstraps/Little Gull.txt")
-readr::read_delim("c:/Users/bruno/Desktop/Flight Height Bootstraps/Little Gull.txt")
-
-
-
-
 
 
 
