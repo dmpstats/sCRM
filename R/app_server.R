@@ -96,7 +96,8 @@ app_server <- function( input, output, session ) {
               mod_pnl_wf_ui(
                 id = paste0('pnl-wf-', wf_id),
                 band_mode = input$'swtc-band-mode',
-                is_demo = is_demo
+                is_demo = is_demo, 
+                wf_label = rv_wf$added_wf
               )
             #)
           #)
@@ -124,7 +125,7 @@ app_server <- function( input, output, session ) {
 
 
   
-  # Render menuSubItem on sidebar for species within active windfarms
+  # Render menuSubItem on sidebar for species within active windfarms ----------
   output$subItems_spps_in_wf <- renderMenu({
     
     req(input$'active-wfs')
@@ -158,7 +159,6 @@ app_server <- function( input, output, session ) {
       immediate = TRUE,  
       ui = shinydashboard::tabItem(
         tabName = paste0("sbsm-sppinwf-", wf_id),
-        # paste0("Here goes the module for species in wf ", wf_id)
         # module for spp in wf
         mod_spp_in_wf_ui(id = paste0("pnl-sppinwf-", wf_id))
       )

@@ -9,7 +9,7 @@
 #' @import glue
 #'
 #' @importFrom shiny NS tagList 
-mod_pnl_spp_ui <- function(id, spp_label, band_mode){
+mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
   
   ns <- NS(id)
   
@@ -43,10 +43,13 @@ mod_pnl_spp_ui <- function(id, spp_label, band_mode){
     ),
     
     # Input completion status tracker
-    mod_input_completion_ui(id = ns("inputstate")),
+    mod_input_completion_ui(
+      id = ns("inputstate"), 
+      pb_title = glue::glue("{spp_label} in {wf_label}")
+      ),
 
     fluidRow(
-      style = 'overflow-y:scroll; height:72vh !important; overflow-x: hidden;',
+      style = 'overflow-y:scroll; height:71vh !important; overflow-x: hidden;',
       
       # Misc Features ------------------------------------------------------------
       fluidRow(
