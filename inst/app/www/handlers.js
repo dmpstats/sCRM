@@ -4,3 +4,10 @@ $( document ).ready(function() {
      $('html').click();
   })
 });
+
+
+
+$( document ).ready(function() {
+  var section = document.getElementsByClassName('content');
+  section[0].setAttribute('id', 'waiter-content');
+});

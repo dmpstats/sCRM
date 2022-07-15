@@ -8,30 +8,82 @@
 #' @noRd
 app_ui <- function(request) {
 
-
+  # ggplot scrm thete
   ggplot2::theme_set(theme_scrm())
   
+  waiter::waiter_set_theme(
+    color = waiter::transparent(0.70)
+    )
+
   tagList(
+    
+    # Your application UI logic
     
     # Leave this function for adding external resources
     golem_add_external_resources(),
     
-    tags$style("@import url(https://use.fontawesome.com/releases/v6.0.0/css/all.css);"),
+    # loading screen -----------------------------------------------------------
+    waiter::waiterShowOnLoad(
+      color = "#D8DEE9", # "#434C5E",
+      html = waiter::hostess_loader(
+        id = "app_loader",
+        svg = "www/favicon_2.svg",
+        text_color = "black",
+        #class = "label-center",
+        progress_type = "fill",
+        fill_direction = "btt",
+        center_page = TRUE
+      )
+    ),
     
-    # Your application UI logic 
+    # link to awesome fonts v6.0.0
+    tags$style("@import url(https://use.fontawesome.com/releases/v6.0.0/css/all.css);"),
+
+    
     shinydashboardPlus::dashboardPage(
-      controlbar = NULL, 
+      controlbar = NULL,
       #freshTheme = fresh::use_theme("inst/app/www/scrm-custom-theme.css"),
-      
+
       # Dashboard header -------------------------------------------------------
       shinydashboardPlus::dashboardHeader(
         #fixed = TRUE,
         title = p(
           img(src = "www/hexSticker_scrm.png", height = "35px"),
           "sCRM"),
-        #fixed = TRUE, 
-        controlbarIcon = NULL,
-
+        controlbarIcon = NULL, 
+        
+        leftUi = tagList(
+          tags$li(
+            class = "dropdown",
+            actionLink(
+              inputId =  "appvrsn",
+              label = tags$b(paste0("v", golem::get_golem_version())),          #packageVersion("sCRM")
+              style = "font-size: 16px; padding-left: 5px; padding-right: 5px")
+          ),
+          tags$li(
+            class = "dropdown", 
+            a(icon('github', "fa-2x"),
+              href='https://github.com/dmpstats/sCRM',
+              style = "padding-top: 10px; padding-bottom: 10px", 
+              target='_blank') %>%
+              bsplus::bs_embed_tooltip(
+                "Code Repository", 
+                "bottom",
+                container = "body")
+          ),
+          tags$li(
+            class = "dropdown", 
+            a(icon('bug', "fa-2x"), 
+              href='https://github.com/dmpstats/sCRM/issues',
+              style = "padding-top: 10px; padding-bottom: 10px", 
+              target='_blank') %>%
+              bsplus::bs_embed_tooltip(
+                "Submit issues, queries and suggestions. Thanks!", 
+                placement = "bottom", 
+                container = "body")
+            )
+        ),
+        
         tags$li(
           class = "dropdown",
           div(
@@ -39,30 +91,23 @@ app_ui <- function(request) {
               inputId = "swtc-band-mode",
               size = "small",
               inline = TRUE,
-              #width = "250px", 
-              labelWidth = "50px", 
+              #width = "250px",
+              labelWidth = "50px",
               handleWidth = "110px",
               label = strong(" Mode"),
-              onStatus = "warning", 
-              offStatus = "info", 
+              onStatus = "warning",
+              offStatus = "info",
               onLabel = strong("Deterministic"),
               offLabel = strong("Stochastic")
-              ),
+            ),
             style="float: right;"# padding-top: 6px; margin-bottom: 0px" # ;color: #ededed"
           )
         )
-      
-        # tags$li(
-        #   class = "dropdown",
-        #   actionLink(
-        #     inputId =  "appvrsn",
-        #     label = tags$b(paste0("v", golem::get_golem_version())),
-        #     style = "font-size: 19px"),
-        # )
-        # tags$li(class = "dropdown", a(icon('github', "fa-2x"), href='https://github.com/dmpstats/stochCRM', 
-        #                               style = "padding-top: 10px; padding-bottom: 10px", target='_blank', id="lbl_codeLink")),
-        # tags$li(class = "dropdown", a(icon('bug', "fa-2x"), href='https://github.com/dmpstats/stochCRM/issues', #exclamation-circle
-        #                               style = "padding-top: 10px; padding-bottom: 10px", target='_blank', id="lbl_issuesLink")),
+        
+
+        
+
+        
         # 
         # # tags$li(class = "dropdown", actionLink("bookmark_btt", label = NULL, icon("bookmark", "fa-2x", lib = "font-awesome"),
         # #                                        style = "padding-top: 10px; padding-bottom: 10px")),
@@ -70,91 +115,96 @@ app_ui <- function(request) {
         #                                        style = "padding-top: 10px; padding-bottom: 10px")),
         # tags$li(class = "dropdown", actionLink("restoreInputs_btt", label = NULL, icon("window-restore", "fa-2x", lib = "font-awesome"),
         #                                        style = "padding-top: 10px; padding-bottom: 10px")),
-        # 
-        # 
-        # tags$li(class = "dropdown", a(img(src = "bioConsultSH_Logo_2.png", height = "40px"), href='https://bioconsult-sh.de/en/',
-        #                               style = "padding-top: 5px; padding-bottom: 5px;", target='_blank', id="lbl_bioConsultLogoLink"),
-        #         style="float: right"),
-        # tags$li(class = "dropdown", a(img(src = "HiDef Logo_2.png", height = "40px"), href='https://hidef.bioconsult-sh.de/',
-        #                               style = "padding-top: 5px; padding-bottom: 5px;", target='_blank', id="lbl_hiDefLogoLink"),
-        #         style="float: right"),
-        # tags$li(class = "dropdown", a(img(src = "DMP_logo_1.png", height = "40px"), href='https://www.dmpstats.com',
-        #                               style = "padding-top: 5px; padding-bottom: 5px", target='_blank', id="lbl_dmpLogoLink"), 
-        #         style="float: right"),
-        # tags$li(class = "dropdown", a(img(src = "MS Logo Linear-01_2.png", height = "30px"), href='https://www.gov.scot/Topics/marine',
-        #                               style = "padding-top: 10px; padding-bottom: 10px;", target='_blank', id="lbl_marineScotlandLink"),
-        #         style="float: right")
+        
+        
       ),
-      
+
       # Dashboard sidebar ------------------------------------------------------
       shinydashboardPlus::dashboardSidebar(
-        
+
         sidebarMenu(
           id = "sidebarmenu",
           style = "white-space: normal;", # required to stop long names to spill beyond sidebar
           
+          br(),
+          
           # Winfarms Section
           menuItem(
             tabName = "sbm-wf",
-            text = strong("Step 1: Windfarm Scenarios"),
+            text = strong("Step 1: Wind Farm Scenarios"),
             icon = icon("fan")
           ),
+          
+          br(),
           
           # Species in Windfarms Section
           menuItem(
             tabName = "sbm-spp",
-            text = strong("Step 2: Species at Windfarm"),
-            icon = icon("crow"), #, #icon("swift") #icon("earlybirds"),
-            menuItemOutput("subItems_spps_in_wf")
+            text = strong("Step 2: Species Features"),
+            icon = icon("crow"),#, #icon("swift") #icon("earlybirds"), 
+            menuItemOutput("subItems_spps_in_wf"),
+            startExpanded = TRUE
           ),
-          
+
+          br(),
+
           # Simulation Section
           menuItem(
             tabName = "sbm-sim",
-            text = strong("Step 3: Simulation & Results"),
+            text = strong("Step 3: Simulation and Outputs"),
             icon = icon("laptop-code")
           )
+        ),
+        
+        # Partnership Logos
+        div(
+          style = "position: absolute; bottom: 20px;",
+          #img(src = "www/hexSticker_scrm.png", height = "150px"),
+          a(img(src = "www/MS Logo stacked.png", height = "45px"), 
+            href='https://www.gov.scot/Topics/marine',
+            style = "padding-top: 10px; padding-bottom: 10px; padding-left:20px", 
+            target='_blank'),
+          rep_br(2),
+          
+          a(img(src = "www/DMP_logo_1.png", height = "40px"), 
+            href='https://www.dmpstats.com',
+            style = "padding-top: 5px; padding-bottom: 10px; padding-left: 20px", 
+            target='_blank'),
+          
+          a(img(src = "www/HiDef Logo_2.png", height = "30px"), 
+            href='https://www.hidefsurveying.co.uk/',
+            style = "padding-top: 5px; padding-bottom: 10px;padding-left: 20px", 
+            target='_blank'),
+          
+          a(img(src = "www/bioConsultSH_Logo_2.png", height = "30px"), 
+            href='https://bioconsult-sh.de/en/',
+            style = "padding-top: 10px; padding-bottom: 5px; padding-left:20px", 
+            target='_blank')
           
         )
-        
-        # # Perhaps include the following at the bottom of the sidebar?
-        # fluidRow(
-        #   column(
-        #     align='center',
-        #     width= 8,
-        #     #h2("Avian Migration Collision risk"),
-        #     img(src = "www/hexSticker_scrm.png", height = "150px")
-        #   )
-        # )
       ),
+
       
       # Dashboard body ------------------------------------------------------
       shinydashboard::dashboardBody(
-        
+
         fresh::use_theme("inst/app/www/scrm-custom-theme.css"),
 
-        # use_theme(
-        #   create_theme(
-        #     theme = "default",
-        #     bs_vars_progress(
-        #       border_radius = "15px",
-        #     ),
-        #     output_file = NULL
-        #   )
-        # ),
-        
-        
         # dashboardthemes::shinyDashboardThemes(
         #   theme = "grey_light"
         # ),
-        
 
         #tabItems(
-        div(class="tab-content", id="tabItemsEnvelope",  # required as reference to the dynamic UI tab for each species via insertUI()
-    
+        div(
+          class="tab-content", 
+          id="tabItemsEnvelope",  # required as reference to the dynamic UI tab for each species via insertUI()
+          
           # Windfarms Section
           tabItem(
             tabName = "sbm-wf",
+            
+            # force minimum height of DIV otherwise overlayed waiter is too small
+            style = "min-height: 100vh;",
             
             fluidRow(
               shinydashboard::tabBox(
@@ -164,28 +214,31 @@ app_ui <- function(request) {
                 
                 # title contains buttons to append additional tabPanels for each windfarm
                 title = add_wf_btns(
-                  dpdn_add_wf_id ="drpdwn-add-wf", 
+                  dpdn_add_wf_id = "drpdwn-add-wf",
                   sltz_wf_id = "active-wfs",
                   dpdn_close_id = "drpdwn-close",
                   dpdn_upld_wf_id = "btn-upld-wf",
                   dwnl_btn_id = "dt-wf-inputs-tmpl",
                   file_input_id = "flinput-wf-inputs")
               )
+            ),
+            shinyjs::hidden(
+              div(
+                id = "no_wf_fdbck",
+                class = "centered-textblock",
+                p("No windfarm scenario specified. To proceed, please provide at least one scenario.",
+                  style = "color: #dd4b39; font-size: 16px;"
+                )
+              )
             )
           ),
           
-          # Simulation and Results
+          # Simulation and Results Section
           tabItem(
             tabName = "sbm-sim",
-            tabsetPanel(type = "tabs",
-                        tabPanel("Plot"),
-                        tabPanel("Summary"),
-                        tabPanel("Table")
-            ),
-            box(
-              title = "Simulation Stuff"
-            )
+            mod_pnl_sim_ui(id = "pnl-sim")
           )
+          
         )
       )
     )
@@ -203,9 +256,7 @@ app_ui <- function(request) {
 #' @noRd
 golem_add_external_resources <- function(){
   
-  add_resource_path(
-    'www', app_sys('app/www')
-  )
+  add_resource_path('www', app_sys('app/www'))
   
   jsCode <- '
     shinyjs.backgroundCol = function(params) {
@@ -229,7 +280,6 @@ golem_add_external_resources <- function(){
       var el = $("#" + params.id);
       el.css("color", params.col);
     }
-  
   '
   
   tags$head(
@@ -239,13 +289,20 @@ golem_add_external_resources <- function(){
       app_title = 'sCRM'
     ),
     
-    # Add here other external resources
-    # for example, you can add shinyalert::useShinyalert() 
+    # Add here other external resource
     shinyjs::useShinyjs(),
     #shinyjs::extendShinyjs(script = "shinyjs_funcs.js", functions = c("backgroundCol")),
     shinyjs::extendShinyjs(text = jsCode, functions = c("backgroundCol", "fontCol")),
     bsplus::use_bs_tooltip(),
-    bsplus::use_bs_popover(),
+    #bsplus::use_bs_popover(),
+    
+    waiter::useAttendant(),
+    waiter::useWaiter(),
+    waiter::useHostess(),
+    
+    sever::useSever(), 
+    
+    cicerone::use_cicerone(),
     
     shinyFeedback::useShinyFeedback()
     

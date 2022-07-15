@@ -26,3 +26,10 @@ label2id <- function(label){
 #'   
 #' @source <https://stackoverflow.com/questions/42456452/changing-vector-to-string-special-separator-for-last-element>
 fPaste <- function(vec) sub(",\\s+([^,]+)$", " and \\1", toString(vec))
+
+
+
+#' Generate a tag of current time, e.g. to add to filenames
+time_tag <- function(){
+  format(Sys.time(), "%d%m%Y_%H%M")
+}

@@ -13,8 +13,6 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
   
   ns <- NS(id)
   
-  #browser()
-  
   # Get default parameter values for current species
   par_dflts <- spp_dflts %>%
     dplyr::filter(spp_id == label2id(spp_label)) %>%
@@ -28,38 +26,39 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
   if("dflt" %not_in% names(par_dflts)) par_dflts$dflt <- NA
   
   bio_pars <- par_dflts %>% 
-    dplyr::filter(par_name %in% c("body_lt", "wing_span", "fl_speed", "nct_act", "avoid_bsc", "avoid_ext"))
+    dplyr::filter(par_name %in% c("body_lt", "wing_span"))
   
-  chr_pars <- par_dflts %>%  
-    dplyr::filter(par_name %in% c("prop_crh"))
+  inflight_pars <- par_dflts %>%  
+    dplyr::filter(par_name %in% c("fl_speed", "nct_act", "avoid_bsc", "avoid_ext", "prop_crh"))
   
   
   tagList(
-    #br(),
-    
-    # Trick with hidden textInput to allow shinyvalidate on rhandsontable
-    shinyjs::hidden(
-      textInput(inputId = ns("hotseasons_ok"), label = "", value = "yes")
-    ),
-    
-    # Input completion status tracker
+
+    # Input completion status tracker ------------------------------------------
     mod_input_completion_ui(
       id = ns("inputstate"), 
-      pb_title = glue::glue("{spp_label} in {wf_label}")
+      pb_title = glue::glue("{spp_label} at {wf_label}")
       ),
 
+    
     fluidRow(
-      style = 'overflow-y:scroll; height:71vh !important; overflow-x: hidden;',
+      style = 'overflow-y:scroll; height:75vh !important; overflow-x: hidden;',
       
-      # Misc Features ------------------------------------------------------------
+      # Misc Features ----------------------------------------------------------
       fluidRow(
         col_5(
-          ## Biometric Features --------------------------------
+          ## Body dimensions --------------------------------
           shinydashboardPlus::box(
-            title = "Biometric Features",
+            title = "Body Dimensions",
             width = 12,
             status = "primary",
             solidHeader = TRUE,
+            
+            dropdownMenu = info_dropdown(
+              inputId = ns("biominfo"),
+              placement = "bottom-end",
+              md_path =  "inst/app/markdown/info_buttons_docs/spp_body_dimensions.md"
+            ),
             
             mod_prob_inputs_ui(
               id = ns("biopars"),
@@ -76,9 +75,15 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
             status = "primary",
             solidHeader = TRUE,
             
+            dropdownMenu = info_dropdown(
+              inputId = ns("inflightinfo"),
+              placement = "bottom-end",
+              md_path =  "inst/app/markdown/info_buttons_docs/spp_inflight_features.md"
+            ),
+            
             fluidRow(
               style = "padding-left: 10px",
-              col_7(
+              col_6(
                 # Flight type
                 shinyWidgets::radioGroupButtons(
                   width = "90%",
@@ -100,13 +105,13 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
                   )
                 )
               ),
-              col_5(
+              col_6(
                 # Prop upwind flights
                 div(
                   numericInput(
                     width = "80%",
                     inputId = ns("upwind"),
-                    label = "Upwind flights (pp)",
+                    label = "Proportion of upwind flights",
                     step = 0.01,
                     value = dplyr::filter(
                       par_dflts, par_name == "upwind_fl") %>% 
@@ -121,8 +126,8 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
             HTML("<hr style='height:2px;border:none;color:#edf0f5;background-color:#edf0f5;' />"),
             
             mod_prob_inputs_ui(
-              id = ns("colrisk"), 
-              pars_lkp = chr_pars, 
+              id = ns("inflightpars"), 
+              pars_lkp = inflight_pars, 
               band_mode = band_mode
             ),
             br()
@@ -137,6 +142,12 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
             status = "primary",
             solidHeader = TRUE,
             
+            dropdownMenu = info_dropdown(
+              inputId = ns("fhdinfo"),
+              placement = "bottom-end",
+              md_path =  "inst/app/markdown/info_buttons_docs/spp_fhd.md"
+            ),
+            
             mod_fhd_inputs_ui(id = ns("fhd")),
             
             rep_br(2)
@@ -144,56 +155,38 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
         )
       ),
       
-      # Monthly Densities --------------------------------------------------------
+      # Monthly Densities ------------------------------------------------------
       shinydashboardPlus::box(
         title = "Monthly In-flight Density",
         width = 9,
         status = "primary",
         solidHeader = TRUE,
         
+        dropdownMenu = info_dropdown(
+          inputId = ns("densinfo"),
+          placement = "bottom-end",
+          md_path =  "inst/app/markdown/info_buttons_docs/spp_density.md"
+        ),
+        
         mod_bird_dens_ui(
           id = ns("dens"), 
           spp_label = spp_label)
       ),
-      
-      
-      # Seasonal Periods --------------------------------------------------------
+  
+      # Output Aggregation level -----------------------------------------------
       shinydashboardPlus::box(
-        title = "Seasonal Periods",
+        title = "Output Options",
         width = 3,
         status = "primary",
         solidHeader = TRUE,
-        br(),
         
-        tagAppendAttributes(
-          shinyWidgets::materialSwitch(
-            inputId = ns("swtchseasons"),
-            label = strong("Outputs by seasonal period(s)?"),
-            value = FALSE,
-            status = "success",
-            inline = FALSE
-          ),
-          style = "padding-left: 9px"
+        dropdownMenu = info_dropdown(
+          inputId = ns("outoptinfo"),
+          placement = "bottom-end",
+          md_path =  "inst/app/markdown/info_buttons_docs/spp_output_options.md"
         ),
-        hr(),
-        div(
-          id = ns("seasons_pnl"),
-          h5(strong(id = ns("seasons_label"), "Seasonal Definitions", style = "padding-left: 9px")),
-          helpText(
-            "Add/remove table rows by right-clicking on a cell",
-            style = "font-size: 12px; padding-left: 8px"
-          ),
-          div(
-            class = "hot-monthly", 
-            rhandsontable::rHandsontableOutput(
-              outputId = ns("hotseasons"),
-              width = "100%")
-          ),
-          div(
-            class = "hot-feedback", 
-            textOutput(ns("seasons_iv_fbck"))
-          )
-        )
+        
+        mod_output_spec_ui(id = ns("outspec"))
       )
     )
   )
@@ -208,66 +201,71 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
 #' @import shinyvalidate
 #' 
 #' @noRd 
-mod_pnl_spp_server <- function(id, spp_label, band_mode){
+mod_pnl_spp_server <- function(id, spp_id, tbx_id, spp_tp_id, spp_label, wf_label, 
+                               band_mode, wf_oper){
   
-  stopifnot(!is.reactive(spp_label))
   stopifnot(is.reactive(band_mode))
+  stopifnot(is.reactive(wf_oper))
+  stopifnot(!is.reactive(spp_label))
+  stopifnot(!is.reactive(spp_id))
+  stopifnot(!is.reactive(wf_label))
   
   moduleServer( id, function(input, output, session){
     
     ns <- session$ns
     
-    # Seasonal periods start-up table -----------------------------------------
-    
-    seasons_df <- dplyr::filter(spp_dflts, spp_id == label2id(spp_label)) %>% 
-      dplyr::pull(seasons) %>% 
-      purrr::pluck(1) 
-    
-    if(is.null(seasons_df)){
-      seasons_df <- data.frame(
-        period_name = as.character(NA),
-        start_month = as.character(NA),
-        end_month = as.character(NA)
-      )
-    }
-    
 
     # Sub-modules' server side -------------------------------------------------
-    c(biopars_iv) %<-% mod_prob_inputs_server(
-      id = "biopars",
-      pars_lkp = dplyr::filter(
-        spp_probdist_pars, 
-        par_name %in% c("body_lt", "wing_span", "fl_speed", "nct_act", "avoid_bsc", "avoid_ext")
+    c(biopars_iv, c(body_lt, wing_span)) %<-%  
+      mod_prob_inputs_server(
+        id = "biopars",
+        pars_lkp = dplyr::filter(
+          spp_probdist_pars, 
+          par_name %in% c("body_lt", "wing_span")
         ),
-      band_mode = band_mode,
-      plot_fill = spp_colour
-    )
-  
-    c(fhd_iv) %<-% mod_fhd_inputs_server(
-      id = "fhd", 
-      spp_label = spp_label, 
-      band_mode = band_mode
-    )
+        band_mode = band_mode,
+        plot_fill = spp_colour
+      )
+    
+    c(fhd_iv, fhd) %<-% 
+      mod_fhd_inputs_server(
+        id = "fhd", 
+        spp_label = spp_label, 
+        band_mode = band_mode
+      )
     
     
-    c(crh_iv) %<-% mod_prob_inputs_server(
-      id = "colrisk",
-      pars_lkp =  dplyr::filter(spp_probdist_pars, par_name %in% c("prop_crh")),
-      band_mode = band_mode,
-      plot_fill = spp_colour
-    )
+    c(inflightpars_iv, c(fl_speed, nct_act, avoid_bsc, avoid_ext, colrisk)) %<-% 
+      mod_prob_inputs_server(
+        id = "inflightpars",
+        pars_lkp =  dplyr::filter(
+          spp_probdist_pars, 
+          par_name %in% c("fl_speed", "nct_act", "avoid_bsc", "avoid_ext", "prop_crh")
+        ),
+        band_mode = band_mode,
+        plot_fill = spp_colour
+      )
     
     
-    c(dens_type, dens_dt, dens_iv) %<-% mod_bird_dens_server(
-      id = "dens", 
-      band_mode = band_mode, 
-      spp_label = spp_label
-    )
+    c(dens_iv, dens) %<-% 
+      mod_bird_dens_server(
+        id = "dens", 
+        band_mode = band_mode, 
+        spp_label = spp_label
+      )
+    
+    c(out_opt_iv, out_opt, seas_dt) %<-% mod_output_spec_server(
+      id = "outspec", 
+      spp_label = spp_label,
+      wf_label = wf_label,
+      wf_oper = wf_oper,
+      dens = dens
+      )
     
     
     # Input validation -----------------------------------------------------
     
-    ## InputValidator rules -----
+    ## InputValidator rules ------------
     
     # Initialize input validator variable
     iv <- InputValidator$new()
@@ -276,24 +274,17 @@ mod_pnl_spp_server <- function(id, spp_label, band_mode){
     iv$add_rule("fltype", sv_required(message = ""))
     iv$add_rule("upwind", sv_required(message = ""))
     iv$add_rule("upwind", sv_between(0, 1, message_fmt = "Must be between {left} and {right}"))
-    
-    ## Conditional validation  -----
-    seasons_iv <- InputValidator$new()
-    seasons_iv$condition(~ input$swtchseasons == TRUE)
-    
-    seasons_iv$add_rule("hotseasons_ok", sv_required(message = ""))
-    seasons_iv$add_rule("hotseasons_ok", ~ if(. != "yes") . )
-    
-    # Append conditional validators
-    iv$add_validator(seasons_iv)
-    
-    # Append validators from sub-modules
+
+    ## Append validators from sub-modules ---
     iv$add_validator(biopars_iv)
-    iv$add_validator(crh_iv)
+    iv$add_validator(inflightpars_iv)
     iv$add_validator(dens_iv)
     iv$add_validator(fhd_iv)
+    iv$add_validator(out_opt_iv)
     
-    ## Upwind flights: Highlight widget background if input missing ----
+    
+    
+    ## Upwind flights: Highlight widget background if input missing ---------
     observeEvent(input$upwind, {
       
       if(!is.na(input$upwind)){
@@ -304,110 +295,62 @@ mod_pnl_spp_server <- function(id, spp_label, band_mode){
     })
     
     
-    ## Seasonal periods data validation ---------
-    observe({
-      
-      req(input$hotseasons)
-      seas_df <- hot_to_r(input$hotseasons) 
-      #browser()
-      
-      if(dens_type() == "tnorm"){
-        avlb_mths <- tidyr::drop_na(dens_dt()) %>%
-          pull(month)  
-      }else if(not_null(dens_dt())){
-        avlb_mths <- tidyr::drop_na(dens_dt()) %>%
-          names()
-      }else{
-        avlb_mths <- NULL
-      }
-      
-      if(all(is.na(seas_df))){   # Check for empty table
-        
-        shinyjs::js$fontCol(ns("seasons_label"), '#dd4b39')
-        updateTextInput(inputId = "hotseasons_ok", value = "")
-        
-      }else if(any(is.na(seas_df))){  # Check for any missing value
-        
-        msg <- "All cells must be populated"
-        output$seasons_iv_fbck <- renderText({msg})
-        shinyjs::js$fontCol(ns("seasons_label"), '#dd4b39')
-        updateTextInput(inputId = "hotseasons_ok", value = msg)
-        
-      }else if(seas_uncovered(seas_df, avlb_mths)){  # check if period is covered by monthly density data
-        msg <- "Defined period(s) comprise month(s) with no density data"
-        output$seasons_iv_fbck <- renderText({msg})
-        shinyjs::js$fontCol(ns("seasons_label"), '#dd4b39')
-        updateTextInput(inputId = "hotseasons_ok", value = msg)
-        
-      }else{  # All good
-        
-        output$seasons_iv_fbck <- renderText({invisible()})
-        shinyjs::js$fontCol(ns("seasons_label"),"#333")
-        updateTextInput(inputId = "hotseasons_ok", value = "yes")
-        
-      }
-    })
-    
-    
     ## Input completion tracker sub-module --------
     mod_input_completion_server(id = "inputstate",  iv = iv )
     
     
-    ## Start validation feedback in the UI ----
+    ## Start validation feedback in the UI --------
     iv$enable()
     
     
-   # Input table for seasonal definitions --------------------------------------
-    output$hotseasons <- renderRHandsontable({
+  
+    # Data processing for Module output ---------------------------------------
+    spp_inputs <- reactive({
       
-      seasons_df %>%
-        rhandsontable(
-          height = 200,
-          #stretchH = "all",
-          rowHeaders = NULL,
-          colHeaders = c(
-            "Period\nName",
-            "Starting\nMonth", 
-            "Ending\nMonth"),
-          overflow = "visible"
-        ) %>%
-        hot_context_menu(allowColEdit = FALSE) %>%
-        hot_cols(colWidths = 98) %>%
-        hot_col(
-          col = 1, type = "text",
-          renderer = "
-             function (instance, td, row, col, prop, value, cellProperties) {
-               Handsontable.renderers.TextRenderer.apply(this, arguments);
-               if (value == null || value.length === 0) {
-                   td.style.background = '#fff1f1';
-               }
-          td.style.fontWeight = 'bold';
-              }"
-        ) %>%
-        hot_col(
-          col = c(2, 3), type = "dropdown", 
-          valign = " htMiddle",
-          source = month.name, strict = TRUE,
-          renderer = "
-            function (instance, td, row, col, prop, value, cellProperties) {
-              Handsontable.renderers.DropdownRenderer.apply(this, arguments);
-              if (!value || value === '') {
-                td.style.background = '#fff1f1';
-               }
-             }"
-          )
+      list(
+        
+        valid = iv$is_valid(),
+        
+        spp_label = spp_label,
+        
+        tbx_id = tbx_id,
+
+        spp_tp_id = spp_tp_id,
+        
+        biom_ftrs = list(
+          body_lt = body_lt(),
+          wing_span = wing_span()
+        ),
+        
+        fhd = fhd(),
+        
+        inflight_ftrs = list(
+          fltype = input$fltype,
+          upwind = input$upwind,
+          colrisk = colrisk(),
+          fl_speed = fl_speed(),
+          nct_act = nct_act(),
+          avoid_bsc = avoid_bsc(),
+          avoid_ext = avoid_ext()
+        ),
+        
+        bird_dens = dens(),
+        
+        # seasons = list(
+        #   #opt = input$swtchseasons,
+        #   opt = input$output_aggr,
+        #   dt = hot_to_r(input$hotseasons)
+        # )
+        
+        out_specs = list(
+          out_opt = out_opt(),
+          seas_dt = seas_dt()
+        )
+      )
     })
     
-    
-    # Dynamic UI: show/hide seasonal definitions panel -------------------------
-    observe({
-      shinyjs::toggle(
-        id = "seasons_pnl", 
-        condition = input$swtchseasons, 
-        anim = TRUE, 
-        animType = "slide") 
-    })
-    
+    # Module output ----------------------------------------------------------
+    spp_inputs
     
   })
 }

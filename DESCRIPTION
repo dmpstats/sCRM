@@ -6,13 +6,16 @@ Description: A Shiny App for a stochastic Collision Risk Model (sCRM) for seabir
 License: MIT + file LICENSE
 Imports: 
     attempt,
+    awn (>= 0.0.1.9000),
     bs4Dash,
     bsplus,
     config (>= 0.3.1),
     distributional,
     dplyr,
     DT,
+    flextable,
     fresh,
+    fs,
     ggdist,
     ggplot2,
     ggridges,
@@ -23,32 +26,42 @@ Imports:
     markdown,
     MetBrewer,
     msm,
+    officedown (>= 0.2.4),
+    officer,
     patchwork,
     pkgload,
     processx,
     purrr,
+    reactable,
+    reactablefmtr,
     rhandsontable,
     rlang,
+    rmarkdown,
+    sever,
     shinipsum,
     shiny (>= 1.6.0),
     shinydashboard,
     shinydashboardPlus,
     shinyFeedback,
     shinyjs,
+    shinypop (>= 0.1.1),
     shinyvalidate,
     shinyWidgets,
     stochLAB (>= 1.0.0),
     thinkr,
+    tibble,
     tidyr,
     tools,
     truncnorm,
     vroom,
-    zeallot
+    waiter,
+    writexl,
+    zeallot,
+    zip
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
 Suggests: 
-    rmarkdown,
     knitr,
     spelling,
     testthat (>= 3.0.0)
@@ -61,4 +74,5 @@ Roxygen: list(markdown = TRUE)
 Depends: 
     R (>= 2.10)
 Remotes: 
-    HiDef-Aerial-Surveying/stochLAB
+    HiDef-Aerial-Surveying/stochLAB,
+    davidgohel/officedown

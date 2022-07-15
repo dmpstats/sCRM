@@ -23,7 +23,7 @@ tbp_wf_App <- function(){
     shinydashboardPlus::dashboardSidebar(),
     dashboardBody(
       golem_add_external_resources(),
-      mod_pnl_wf_ui('wf-1', is_demo = TRUE, band_mode = FALSE)
+      mod_pnl_wf_ui('wf-1', is_demo = TRUE, band_mode = FALSE, wf_label = "wf 1")
     )
   )
 
@@ -83,9 +83,9 @@ prob_input_app <- function(){
           id = "input_1", 
           #pars_lkp = spp_biopars_lookup
           pars_lkp = wf_pars_lookup %>%
-            filter(par_name %in% c("bld_pitch", "rtn_speed"))
+            filter(par_name %in% c("bld_pitch", "rtn_speed")), 
+          band_mode = TRUE
         )
-          
       )
     )
   )
@@ -143,40 +143,36 @@ library(shiny)
 
 spp_pnl_app <- function(){
   
-  # 
-  #  ui <- shinydashboardPlus::dashboardPage(
-  #   
-  #   shinydashboardPlus::dashboardHeader(),
-  #   shinydashboardPlus::dashboardSidebar(),
-  #   dashboardBody(
-  #     golem_add_external_resources(),
-  #     mod_pnl_wf_ui('wf-1', is_demo = TRUE, band_mode = FALSE)
-  #   )
-  # )
-  #  
-  #  
-   
-  ui <- fluidPage(
-    
-    golem_add_external_resources(),
-    
-    fluidRow(
-      column(
-        12,
-        mod_pnl_spp_ui(
-          id = "Common_Guillemot", 
-          spp_label = "Common Guillemot",
-          band_mode = FALSE)
+   ui <- shinydashboardPlus::dashboardPage(
+
+    shinydashboardPlus::dashboardHeader(),
+    shinydashboardPlus::dashboardSidebar(),
+    dashboardBody(
+      golem_add_external_resources(),
+      fluidRow(
+        column(
+          12,
+          mod_pnl_spp_ui(
+            id = "Common_Guillemot", 
+            spp_label = "Common Guillemot",
+            band_mode = FALSE, wf_label = "Demo")
+        )
       )
     )
-  )
+   )
+
   
   server <- function(input, output, session) {
+    
+     rv_inputs <- reactiveValues()
     
     mod_pnl_spp_server(
       id = "Common_Guillemot", 
       spp_label = "Common Guillemot", 
-      band_mode = reactive(FALSE))
+      band_mode = reactive(FALSE), 
+      wf_id = "demo", 
+      spp_id = "guill", 
+      scrm_inputs = rv_inputs)
   }
   
   shinyApp(ui, server)
@@ -284,6 +280,107 @@ completeness_app()
 
 
 
+
+```{r}
+library(shiny)
+library(zeallot)
+
+fhd_inputs_app <- function(){
+  
+  ui <- fluidPage(
+    golem_add_external_resources(),
+    mod_fhd_inputs_ui(id = "fhd_1")
+  )
+  
+  server <- function(input, output, session) {
+    
+    #c(fhd_iv, gen_fhd, surv_fhd) %<-% mod_fhd_inputs_server(
+    c(fhd_iv, fhd) %<-% mod_fhd_inputs_server(
+      id = "fhd_1",
+      spp_label = "gcaixota", #"Common Guillemot",
+      band_mode = reactive(FALSE)
+    )
+    
+    observe({
+      browser()
+      fhd
+      fhd_iv$validate()
+    })
+    
+  }
+  
+  shinyApp(ui, server)
+}
+
+fhd_inputs_app()
+
+```
+
+
+
+
+```{r cars}
+library(shiny)
+
+output_panel_App <- function(){
+
+  ui <- shinydashboardPlus::dashboardPage(
+    
+    shinydashboardPlus::dashboardHeader(),
+    shinydashboardPlus::dashboardSidebar(),
+    dashboardBody(
+      golem_add_external_resources(),
+     
+       mod_sim_outputs_ui(
+        id = "outputs",
+        scrm_outputs = reactive(iris)
+      )
+      
+      # shinyWidgets::verticalTabsetPanel(
+      #   id = "vtabwf_2",
+      #   contentWidth = 11,
+      #   color = "#434C5E",
+      #   shinyWidgets::verticalTabPanel(
+      #     title = ""
+      #   )
+      # )
+      
+    )
+  )
+
+  server <- function(input, output, session) {
+
+    mod_sim_outputs_server(
+      id = "outputs",
+      scrm_inputs = reactiveValues(cars = cars),
+      scrm_outputs = reactive(iris)
+    )
+    
+    
+    # shinyWidgets::appendVerticalTab(
+    #   inputId = "vtabwf_2", 
+    #   shinyWidgets::verticalTabPanel(
+    #     title = "duh", 
+    #     shinydashboard::tabBox(
+    #       width = 12,
+    #       tabPanel(title = "Species 1", "species 1 outputs"),
+    #       tabPanel(title = "Species 2", "species 2 outputs")
+    #     )
+    #   )
+    # )
+    # 
+    # shinyWidgets::removeVerticalTab(
+    #   inputId = "vtabwf_2",
+    #   index = 1
+    # )
+    
+  }
+
+  shinyApp(ui, server)
+}
+
+output_panel_App()
+```
 
 
 
@@ -413,6 +510,368 @@ densbird_draws_plot(
 )
 ```
 
+
+
+
+```{r}
+dist_df = tibble::tribble(
+  ~month, ~subgroup, ~mean, ~sd,
+  "a",          "h",     5,   1,
+  "b",          "h",     7,   1.5,
+  "c",          "h",     8,   1,
+  "d",          "i",     9,   1,
+  "f",          "j",     7,   1
+)
+
+
+dist_df %>%
+  dplyr::mutate(
+    dist = distributional::dist_truncated(
+      distributional::dist_normal(mean, sd), 
+      lower = 0)
+  ) %>%
+  dplyr::mutate(
+    dist = 0.01 * (11 - dist)
+  )%>%
+  ggplot2::ggplot(ggplot2::aes(x = month, ydist = dist)) +
+  ggdist::stat_pointinterval(
+    colour = "green", 
+    interval_size_range = c(1.5, 3),
+    shape = 21,
+    stroke = 1.5,
+    point_size = 3,
+    point_fill = "white",
+    point_interval = "mean_qi") +
+  ggplot2::labs(
+    y = "Proportion of month operational", 
+    title = "Mean and Quantile Intervals (66% and 95%) of proportion of time operational per month", 
+    x = "")
+
+
+
+dist_df %>%
+  dplyr::mutate(
+    dist = distributional::dist_truncated(
+      distributional::dist_normal(mean, sd), 
+      lower = 0)
+  ) %>%
+  dplyr::mutate(
+    dist = 0.01 * (11 - dist),
+    mean_tnorm = mean(dist)
+  ) %>%
+  ggplot2::ggplot(ggplot2::aes(x = month, ydist = dist)) +
+  ggdist::stat_interval(
+    interval_size = 10,
+    .width = c(.5, .8, .95), #, .99)
+    ) +
+  ggplot2::geom_point(
+    ggplot2::aes(x = month, y = mean_tnorm),
+    size = 6,
+    color = "#022601", #"#034701",
+    ) +
+  #ggplot2::scale_color_brewer(palette = "Greens", name = "Quantile Interval") +
+  ggplot2::scale_color_manual(values = MetBrewer::met.brewer("VanGogh3", n = 3)) +
+  ggplot2::labs(
+    y = "Proportion of month operational", 
+    title = "Mean and Quantile Intervals of proportion of time operational per month", 
+    x = "")
+
+
+
+```
+
+
+
+
+## Developing final feedback table on input validation to grant simulation
+
+```{r}
+
+library(reactable)
+library(tidyr)
+library(dplyr)
+library(tibble)
+
+
+df <- tibble::tribble( 
+  ~scenario,                  ~section, ~input_valid,
+  "Demo WF",             "WF Features",         TRUE,
+  "Demo WF",                "Demo SPP",         TRUE,
+  "Demo WF",               "Kittiwake",        FALSE,
+  "Tavira WF",           "WF Features",        FALSE,
+  "Tavira WF",                  "Gull",         TRUE,
+  "Veeeery Looong WF",   "WF Features",         TRUE,
+  "Veeeery Looong WF",     "Razorbill",         TRUE,
+  "Veeeery Looong WF",          "Gull",         TRUE,
+  "Veeeery Looong WF",     "Kittiwake",         TRUE,
+) 
+
+
+df <- df %>%    
+  dplyr::group_by(scenario) %>%
+  dplyr::mutate(scenario_status = all(input_valid == TRUE)) %>%
+  tidyr::nest(section_status = c("section", "input_valid"))
+
+
+df %>%
+  dplyr::select(scenario, scenario_status) %>%
+  reactable::reactable(
+    outlined = TRUE, 
+    highlight = TRUE,
+    theme = reactable::reactableTheme(borderColor = "black", headerStyle = "display: none"),
+    columns = list(
+      scenario = reactable::colDef(name = "Scenario", minWidth = 90),
+      scenario_status = reactable::colDef(
+        name = "Status", 
+        minWidth = 60, 
+        align = "center",
+        cell = function(value) status_icon(value)
+      )
+    ),
+    style = list(
+      fontSize = "12px"
+      #colour = "black"
+    ),
+    class = "hidden-column-headers",
+    details = function(index){
+      htmltools::div(
+        style = "margin-left: 20px",
+        reactable::reactable(
+          df$section_status[[index]],
+          theme = reactableTheme(backgroundColor = "#ebedf0"),
+          columns = list(
+            section =  reactable::colDef(name = "Input Section", minWidth = 90),
+            input_valid = reactable::colDef(
+              name = "", 
+              minWidth = 60,
+              align = "center",
+              cell = function(value) status_icon(value))
+          ),
+          outlined = TRUE,
+          highlight = TRUE
+        )
+      )
+    }
+  )
+
+
+
+
+
+
+df <- tibble::tribble( 
+                 ~scenario,   ~input_valid,
+  "No scenarios specified",          FALSE
+  
+) 
+
+
+
+
+df %>%
+ reactable::reactable(
+   theme = reactable::reactableTheme(borderColor = "black"),
+   style = list(
+     fontSize = "12px"
+     #colour = "black"
+   ),
+   columns = list(
+     #panel_id = reactable::colDef(show = FALSE),
+     #section =  reactable::colDef(
+    #   #name = "Input Section", 
+    #   minWidth = 90
+    # ),
+     input_valid = reactable::colDef(
+       #name = "", 
+       minWidth = 40, 
+       align = "center",
+       cell = function(value, index) status_icon(value, level = 1)
+     )
+   ),
+   outlined = TRUE
+ )
+
+```
+
+
+
+## Automatic report generation
+```{r}
+run_datasets <- readr::read_rds("./data-raw/run_example_datasets_small.rds")
+
+library(zeallot)
+library(ggplot2)
+
+c(scrm_inputs, scrm_outputs, scrm_results) %<-% run_datasets
+
+rmarkdown::render(
+  "inst/app/markdown/scrm_report/sCRM_report.rmd",
+  params = list(
+    scrm_inputs = scrm_inputs, 
+    scrm_results = scrm_results,
+    band_mode = FALSE,
+    niter = 10
+  ),
+  envir = new.env(parent = globalenv())
+)
+
+
+
+wf_active <- scrm_inputs$active_scens
+
+scrm_inputs$wf_scens$Demo_Windfarm$wf_inputs
+
+
+```
+
+
+
+
+
+
+## Devising structure of data to feed into `stochLAB::stoch_crm`
+
+
+scrm_inputs
+  |
+  |- iv
+  |
+  |- scenario 1 (e.g. 'Demo_WF')
+  |      |
+  |      |- iv
+  |      |
+  |      |- input section 1 (e.g. 'wf_inputs')
+  |      |       |
+  |      |       |- iv
+  |      |       |
+  |      |       |- pars
+  |      |            |
+  |      |            |- pars section 1 (e.g. 'wf_ftrs')
+  |      |            |- pars section 2 (e.g. 'trbn_ftrs')
+  |      |
+  |      |
+  |      |- input section 2 (e.g. 'demo_spp_ftrs')
+  |      |       |
+  |      |       |- iv
+  |      |       |
+  |      |       |- pars
+  |      |            |
+  |      |            |- pars section 1 (e.g. 'bio_ftrs')
+  |      |            |- pars section 2 (e.g. 'fhd')
+  |      |            |- ...
+  |      |
+  |      |- ...
+  |
+  |
+  |- scenario 2 (e.g. 'Berwick_Bank')
+  |      |
+  |      |- iv
+  |      |
+  |      |- input section 1
+  |      |       |
+  |      |       |- iv
+  |      |       |
+  |      |       |- pars
+  |      |
+  |      |- ...
+  |      
+  |- ...      
+  
+  
+  
+```{r}
+
+
+
+
+scrm_inputs <- list(list(list()))
+
+scrm_inputs[["demo_wf"]][["wf_inputs"]][["iv"]] <- "test"
+
+
+scrm_inputs[["demo_wf"]][["wf_inputs"]][["wf_ftrs"]] <- 
+  data.frame(
+    n_turbines = 3,
+    latitude = 55,
+    width = 10
+  )
+
+
+scrm_inputs[["demo_wf"]][["wf_inputs"]][["trbn_ftrs"]] <-
+  tibble::tibble(
+    n_blades = 3,
+    rtr_radius = 12,
+    air_gap = 7,
+    rtn_pitch = list(  
+      parlist = list(
+        opt = "prob",
+        bldptch = tibble::tibble(mean = 3, sd = 1),
+        rtr_speed = tibble::tibble(mean = 10, sd = 2)  
+      )
+    )
+  )
+    
+
+scrm_inputs$demo_wf$wf_inputs$trbn_ftrs$rtn_pitch$parlist$opt
+
+
+
+
+test <- list(
+  valid = TRUE,
+  scen_1 = list(
+    valid = TRUE,
+    wf_label = "scenario 1",
+    wf_tbpnl = "tbx-pnl-scen1",
+    wf_inputs = list(
+      valid = TRUE,
+      wf_ftrs = list(
+        nturb = 100,
+        lat = 45
+      ),
+      trb_ftrs = list(
+        n_blades = 2,
+        airgap = 12
+      )
+    ),
+    demo_spp = list(
+      valid = TRUE,
+      biom_ftrs = list(
+        bodylt = data.frame(mean = 12, sd = 2),
+        wing_span =  data.frame(mean = 5, sd = 2)
+      ),
+      fhd = data.frame(height = 1:100, matrix(0, nrow = 100, ncol = 100)),
+      inflight_ftrs = list(
+        fltype = "Gliding",
+        crh = 12
+      ),
+      bdens = data.frame(month = month.name, mean = 1:12, sd = 1)
+    )
+  )
+)
+
+
+test$valid <- NULL
+
+purrr::pluck(test, "valid") <- NULL
+
+
+```
+
+
+
+
+## TO DO's and to Check
+
+- `dashboardBadge` to sidebar items indicating the number of items in each
+section (e.g. number of windfarms; number of species in a windfarm scenario)
+
+- Activate "Close/Done" button on Add Species dropdown bubble
+
+- FIX: issue with reselecting previously removed windfarm
+
+- FIX: extra vertical tabs for generic and site-specific FHDs are being added
+every time a species is selected repeatedly
 
 
 

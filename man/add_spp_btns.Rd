@@ -10,7 +10,8 @@ add_spp_btns(
   drpdwn_btn_id,
   dwnl_btn_id,
   file_input_id,
-  dpdn_close_id
+  dpdn_close_id,
+  wf_label
 )
 }
 \arguments{

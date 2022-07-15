@@ -49,7 +49,7 @@ mod_bird_dens_ui <- function(id, spp_label){
       mod_monthly_hotab_ui(
         id = ns("tnorm"),
         hot_title = strong(
-          "Distribution parameters for daytime in-flight density within the windfarm footprint (birds/km",
+          "Estimates of daytime in-flight density within the windfarm footprint (birds/km",
           tags$sup(2, .noWS = "before"),
           strong(")", .noWS = c("before"))
         )
@@ -69,7 +69,7 @@ mod_bird_dens_ui <- function(id, spp_label){
       br(),
       col_12(
         p(id = ns("pctls_label"), 
-          strong("Upload percentiles of daytime in-flight density within the windfarm
+          strong("Percentiles of daytime in-flight density within the windfarm
                  footprint (birds/km", 
                  tags$sup(2, .noWS = "before"), 
                  strong(")", .noWS = c("before")))
@@ -117,7 +117,7 @@ mod_bird_dens_ui <- function(id, spp_label){
       br(),
       col_12(
         p(id = ns("draws_label"), 
-          strong("Upload random draws of daytime in-flight density within the windfarm
+          strong("Random draws of daytime in-flight density within the windfarm
                  footprint (birds/km", 
                  tags$sup(2, .noWS = "before"), 
                  strong(")", .noWS = c("before"))
@@ -198,6 +198,13 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
     )
     
     
+    # Initialize waiter screens for density plots
+    w <- waiter::Waiter$new(
+      id = c(ns("tnorm_summ_plot"), ns("pctls_dt_plot"), ns("draws_dt_plot")),
+      html = waiter::spin_loaders(15, color = "#434C5E")
+    )
+    
+    
     # Sub-modules' server side -------------------------------------------------
     
     c(dens_tnorm, tnorm_iv) %<-% mod_monthly_hotab_server(
@@ -261,7 +268,7 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
     # })
 
     
-    # Options for density data, based on band_mode -----------------------------
+    # Options for type of density data, based on band_mode -----------------------------
     observeEvent(band_mode(), {
       
       if(band_mode()){
@@ -269,7 +276,7 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
         shinyWidgets::updateRadioGroupButtons( 
           session = session, 
           inputId = "dttype",  
-          choices = c("Trunc. Normal Distribution" = "tnorm"), 
+          choices = c("Point Estimates" = "tnorm"), 
           selected = "tnorm",
           checkIcon = list(
             yes = tags$i(class = "fa fa-circle",
@@ -278,7 +285,7 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
                         style = "color: #2D78C3")
           )
         )
-        
+
       }else{
         
         shinyWidgets::updateRadioGroupButtons( 
@@ -287,7 +294,7 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
           choices = c("Trunc. Normal Distribution" = "tnorm",
                       "Percentile Estimates" = "pctls",
                       "Random Draws" = "draws"),
-          selected = "tnorm",
+          # selected = "tnorm",
           checkIcon = list(
             yes = tags$i(class = "fa fa-circle",
                          style = "color: #2D78C3"),
@@ -296,7 +303,6 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
           )
         )
       }
-      
     })
     
     
@@ -309,42 +315,55 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
       input_id <- "flinput-pctls"
       file <- input[[input_id]]
       
-      req(file)
-      
-      shinyFeedback::hideFeedback(input_id)
-
-      dens_pctls <- load_dens(file$name, file$datapath, pctl_dt = TRUE)
-
-      if(dens_pctls$error){
-        updateTextInput(inputId = "pctlsOK", value = dens_pctls$msg)
-        shinyFeedback::showFeedbackDanger(input_id, text = dens_pctls$msg)
-        NULL
+      # Upload if user has provided file to read data from. Otherwise return NULL
+      if(not_null(file)){
+        
+        #req(file)
+        
+        shinyFeedback::hideFeedback(input_id)
+        
+        dens_pctls <- load_dens(file$name, file$datapath, pctl_dt = TRUE)
+        
+        if(dens_pctls$error){
+          updateTextInput(inputId = "pctlsOK", value = dens_pctls$msg)
+          shinyFeedback::showFeedbackDanger(input_id, text = dens_pctls$msg)
+          NULL
+        }else{
+          updateTextInput(inputId = "pctlsOK", value = "yes")
+          dens_pctls$dt
+        }
       }else{
-        updateTextInput(inputId = "pctlsOK", value = "yes")
-        dens_pctls$dt
+        NULL
       }
     })
     
     
+    
     ## Read-in random samples uploaded by user ----------
     dens_draws <- reactive({
-
+      
       input_id <- "flinput-draws"
       file <- input[[input_id]]
       
-      req(file)
-
-      shinyFeedback::hideFeedback(input_id)
+      # Upload if user has provided file to read data from. Otherwise return NULL
+      if(not_null(file)){
       
-      dens_draws <- load_dens(file$name, file$datapath, pctl_dt = FALSE)
-      
-      if(dens_draws$error){
-        updateTextInput(inputId = "drawsOK", value = dens_draws$msg)
-        shinyFeedback::showFeedbackDanger(input_id, text = dens_draws$msg)
-        NULL
+        #req(file)
+        
+        shinyFeedback::hideFeedback(input_id)
+        
+        dens_draws <- load_dens(file$name, file$datapath, pctl_dt = FALSE)
+        
+        if(dens_draws$error){
+          updateTextInput(inputId = "drawsOK", value = dens_draws$msg)
+          shinyFeedback::showFeedbackDanger(input_id, text = dens_draws$msg)
+          NULL
+        }else{
+          updateTextInput(inputId = "drawsOK", value = "yes")
+          dens_draws$dt
+        }
       }else{
-        updateTextInput(inputId = "drawsOK", value = "yes")
-        dens_draws$dt
+        NULL
       }
     })
     
@@ -354,6 +373,8 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
     
     ## Point-range plot for Truncated Normal parameters ----
     output$tnorm_summ_plot <- renderPlot({
+      
+      w$show()
 
       if(!band_mode()){
         
@@ -378,8 +399,8 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
                 distributional::dist_normal(Mean, SD), lower = 0)
           ) %>%
           ggplot2::ggplot(ggplot2::aes(x = month, ydist = dist)) +
-          ggdist::stat_eye(
-          #ggdist::stat_halfeye(
+          #ggdist::stat_eye(
+          ggdist::stat_halfeye(
             slab_fill = spp_colour,
             slab_alpha = 0.5,
             slab_colour = "black", 
@@ -416,6 +437,8 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
       
       req(dens_pctls())
       
+      w$show()
+      
       densbird_pctl_plot(
         data = dens_pctls(), 
         pctl = pctl, 
@@ -428,6 +451,8 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
     output$draws_dt_plot <- renderPlot({
       
       req(dens_draws())
+      
+      w$show()
       
       densbird_draws_plot(
         data = dens_draws(), 
@@ -464,23 +489,34 @@ mod_bird_dens_server <- function(id, band_mode, spp_label){
     
     
     
-    # -- Module Outputs ------------------------------------------------------
+    # -- Data pre-processing for module Outputs --------------------------------
 
-    dens_dt <- reactive({
-
+    dens <- reactive({
+      
+      req(input$dttype)
+      
+      # select dataset with chosen type of data
       if(input$dttype == "tnorm"){
-        dens_tnorm()
+        dt <- dens_tnorm()
       }else if(input$dttype == "pctls"){
-        dens_pctls()
+        dt <- dens_pctls()
       }else if(input$dttype == "draws"){
-        dens_draws()
+        dt <- dens_draws()
       }
+      
+      # list comprising data type and dataset
+      list(
+        dens_type = input$dttype,
+        dens_dt = dt
+      )
+      
     })
      
+    
+    # -- Module Outputs ------------------------------------------------------
     list(
-      dt_type = reactive(input$dttype),
-      dt = dens_dt,
-      iv = iv
+      iv = iv,
+      dens = dens
     )
     
   })

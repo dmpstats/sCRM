@@ -85,8 +85,8 @@ mod_prob_inputs_row_ui <- function(id, par_label, par_dist, dflt_mean, dflt_sd,
 #'
 #' @import shinyvalidate
 #' @noRd 
-mod_prob_inputs_row_server <- function(id, par_label, par_dist, par_name, band_mode,
-                                       plot_fill){
+mod_prob_inputs_row_server <- function(id, par_label, par_dist, par_name, 
+                                       band_mode, plot_fill){
   
   stopifnot(!is.reactive(par_label))
   stopifnot(!is.reactive(par_dist))
@@ -172,8 +172,7 @@ mod_prob_inputs_row_server <- function(id, par_label, par_dist, par_name, band_m
     })
     
 
-    
-    
+
     # --- Dynamic UI -----------------------------------------------------------
     
     # toggle sd numeric input based on band mode, and manage previously defined
@@ -242,7 +241,10 @@ mod_prob_inputs_row_server <- function(id, par_label, par_dist, par_name, band_m
     
     # return InputValidator object
     list(
-      iv = iv
+      iv = iv,
+      par_df = reactive(
+        data.frame(mean = input$mean, sd = input$sd)
+      )
     )
     
   })

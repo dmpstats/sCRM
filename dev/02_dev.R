@@ -31,6 +31,7 @@ usethis::use_package("msm")
 usethis::use_package("dplyr")
 usethis::use_package("tidyr")
 usethis::use_package("purrr")
+usethis::use_package("tibble")
 usethis::use_package("rhandsontable")
 usethis::use_package("rlang")
 usethis::use_package("truncnorm")
@@ -44,9 +45,19 @@ usethis::use_package("zeallot")
 usethis::use_package("ggdist")
 usethis::use_package("distributional")
 usethis::use_package("patchwork")
-
+usethis::use_package("reactable")
+usethis::use_package("reactablefmtr")
+usethis::use_package("waiter")
+usethis::use_package("sever")
+usethis::use_package("flextable")
+usethis::use_package("fs")
+usethis::use_package("writexl")
+usethis::use_package("zip")
+usethis::use_package("officer")
+usethis::use_package("rmarkdown")
 
 usethis::use_dev_package("stochLAB", remote = "HiDef-Aerial-Surveying/stochLAB")
+usethis::use_dev_package("officedown", remote = "davidgohel/officedown")
 
 ## Environment reproducibility
 #renv::init()
@@ -65,11 +76,13 @@ golem::add_module( name = "spp_in_wf" )
 golem::add_module( name = "fhd_inputs" )
 golem::add_module( name = "bird_dens" )
 golem::add_module( name = "pnl_spp" )
-
 golem::add_module( name = "monthly_hotab" )
 golem::add_module( name = "input_completion" )
-
-golem::add_module( name = "test" )
+golem::add_module( name = "pnl_sim" )
+golem::add_module( name = "sim_options" )
+golem::add_module( name = "sim_outputs" )
+golem::add_module( name = "output_spec" )
+golem::add_module( name = "spp_results" )
 
 
 ## Add helper functions ----
@@ -86,11 +99,19 @@ golem::add_fct( "drop_from_sltize" )
 golem::add_fct( "input_val_rules" )
 golem::add_fct( "info_dropdown" )
 golem::add_fct( "theme_sCRM" )
+golem::add_fct( "intro_guide" )
 
 
 golem::add_fct("processing", module = "fhd_inputs")
 golem::add_fct("processing", module = "bird_dens")
+golem::add_fct("plot_collisions", module = "spp_results")
+golem::add_fct("plot_collisions", module = "spp_results")
+golem::add_fct("summ_collisions", module = "spp_results")
+golem::add_fct("export_inputs", module = "sim_outputs")
+golem::add_fct("export_outputs", module = "sim_outputs")
 
+
+golem::add_utils("helpers", module = "sim_options")
 
 
 

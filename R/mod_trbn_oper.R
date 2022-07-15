@@ -66,7 +66,7 @@ mod_trbn_oper_ui <- function(id){
     #span(textOutput(ns("trboper_iv_fbck")), style = "color: #fa8c05"),
     col_8(
       offset = 2,
-      plotOutput(ns("opermth_plot"), width = "100%", height = 285)
+      plotOutput(ns("opermth_plot"), width = "100%", height = 300)
     )
   )
 }
@@ -94,6 +94,15 @@ mod_trbn_oper_server <- function(id, band_mode, is_demo){
     
     ns <- session$ns
     
+    # Object Initialization --------------------------------------------------
+    
+    # Initialize waiter screens for density plots
+    w <- waiter::Waiter$new(
+      #id = c(ns("trbdwnt_plot"), ns("wndavlb_plot"), ns("opermth_plot")),
+      id = c(ns("opermth_plot")),
+      html = waiter::spin_loaders(15, color = "#434C5E")
+    )
+    
     # Sub-modules' server side -------------------------------------------------
     
     c(trbdwnt_df, trbdwnt_iv) %<-% mod_monthly_hotab_server(
@@ -111,7 +120,7 @@ mod_trbn_oper_server <- function(id, band_mode, is_demo){
       startup_tab =  startup_wind_avbl, 
       is_pdist = FALSE,
       col_widths = 89
-    )
+    ) 
     
     
     # ---  Input Validation  ---------------------------------------------------
@@ -120,12 +129,6 @@ mod_trbn_oper_server <- function(id, band_mode, is_demo){
     iv <- InputValidator$new()
     iv$add_validator(trbdwnt_iv)
     iv$add_validator(wndavlb_iv)
-    
-    # observe({
-    #   #browser()
-    #   #print(iv$validate())
-    #   print(trbdwnt_iv$validate())
-    # })
     
 
     # --- Turbine Downtime Plot ------------------------------------------------
@@ -200,44 +203,36 @@ mod_trbn_oper_server <- function(id, band_mode, is_demo){
     
     output$opermth_plot <- renderPlot({
       
+      w$show()
+      
       if(band_mode() == FALSE){
-        
-        # trbdwnt_df() %>%
-        #   dplyr::left_join( wndavlb_df(), by = c("name", "month")) %>%
-        #   dplyr::mutate(
-        #     prop_oper_mean = 0.01 * (wndavlb - Mean),
-        #     prop_oper_lwb = 0.01 * (wndavlb - qtruncnorm(p = 0.025, mean= Mean, sd = SD, a = 0)),
-        #     prop_oper_upb = 0.01 * (wndavlb - qtruncnorm(p = 0.975, mean = Mean, sd = SD, a = 0))
-        #   ) %>%
-        #   ggplot2::ggplot(aes(x=month, y = prop_oper_mean, group=month)) +
-        #   ggplot2::geom_pointrange(aes(ymin = prop_oper_lwb, ymax = prop_oper_upb),
-        #                            col = wf_colour, size =0.8) +
-        #   ggplot2::labs(y = "Proportion of month operational", x = "")
-        # 
-        
-        
         trbdwnt_df() %>%
           dplyr::left_join( wndavlb_df(), by = c("name", "month")) %>%
           dplyr::mutate(
-            dist = distributional::dist_truncated(
-                distributional::dist_normal(Mean, SD), 
-                lower = 0)
-            ) %>%
+            trbdwnt_dist = distributional::dist_truncated(
+              distributional::dist_normal(Mean, SD), 
+              lower = 0)
+          ) %>%
           dplyr::mutate(
-            dist = 0.01 * (wndavlb - dist)
-          )%>%
-          ggplot2::ggplot(ggplot2::aes(x = month, ydist = dist)) +
-          ggdist::stat_pointinterval(
-            colour = wf_colour, 
-            interval_size_range = c(1.5, 3),
-            shape = 21,
-            stroke = 1.5,
-            point_size = 3,
-            point_fill = "white",
-            point_interval = "mean_qi") +
+            oper_dist = 0.01 * (wndavlb - trbdwnt_dist),
+            mean_oper = mean(oper_dist)
+          ) %>%
+          ggplot2::ggplot(ggplot2::aes(x = month, ydist = oper_dist)) +
+          ggdist::stat_interval(
+            interval_size = 10,
+            .width = c(.5, .8, .95), #, .99)
+          ) +
+          ggplot2::geom_point(
+            ggplot2::aes(x = month, y = mean_oper),
+            size = 5,
+            color = "black", #"#022601", #"#034701"
+          ) +
+          ggplot2::scale_color_manual(
+            values = MetBrewer::met.brewer("VanGogh3", n = 4),
+            name = "Quantile\nInterval") +
           ggplot2::labs(
             y = "Proportion of month operational", 
-            title = "Mean and Quantile Intervals (66% and 95%) of proportion of time operational per month", 
+            title = "Mean and Quantile Intervals of proportion of time operational per month", 
             x = "")
         
           

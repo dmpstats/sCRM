@@ -1,0 +1,21 @@
+---
+title: "Documentation Notes"
+author: "Bruno Caneco"
+date: '2022-06-08'
+output: html_document
+---
+
+## TO DO's
+
+- Document the modular structure of the app
+
+- Document the structure of the data feeding into the sCRM simulations
+
+- Document modules in a vignette(?)
+
+- FHD: Make clear that, if only survey FHD are specified, option 2 calculations
+use survey FHD. This should probably go on the info button.
+
+- Monthly Operation: refer that if data is not specified for a month in one of
+the downtime or wind availability datasets, then there will be no operation
+figures for that month

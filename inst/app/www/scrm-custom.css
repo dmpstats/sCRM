@@ -7,7 +7,7 @@
 .btn-rmv-tabPanel{
   width: 18px !important; 
   height: 18px !important;
-  font-size: 8px !important;
+  font-size: 11px !important;
   line-height: 1px !important;
   padding: 0px !important;
   margin-left: 12px !important;
@@ -186,6 +186,75 @@ td, th {
 }
 
 
+
+/* Visually hide column headers in {reactable}, but keep them accessible to screen reader users. */
+/* Used in inputs status summary table in simulation section */
+.hidden-column-headers .rt-thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+
+
+/* Centered tet block */
+/* Used to provide feedback to user when no winfarm/species are specified */
+div.centered-textblock {
+    height: 20em;
+    position: relative }
+    
+div.centered-textblock p {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%)
+}
+  
+  
+
+
+/* Progress bars for sCRM runs */
+.scrm-run-progress {
+  border-radius: 8px;
+  background-color: #c2c2c2;
+}  
+  
+.scrm-run-progress .bg-primary{
+  background-color: #43669e;
+}
+  
+  
+/* Vertical Tab title */
+.vtab-title {
+  font-size: 15px;
+}
+
+
+/* Waiter screen for loading input panels */
+.waiter-input-panel {
+  position: absolute;      
+  top: 8%; 
+  left: 48%;
+}
+
+
+/* Outputs download button */
+.download-btn{
+  background: #434C5E;
+  color: white;
+  border-radius: 6px;
+}
+
+
+
+/*#dc5050*/
                                
 /*
 body {

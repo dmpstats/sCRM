@@ -23,7 +23,7 @@ mod_input_completion_ui <- function(id, pb_title = ""){
             size = "xs",
             status = "success",
             striped = FALSE,
-            title = pb_title, #"Demo Windfarm Parameters", #"Completion Status"
+            title = pb_title,
           ),
           class = "pb-inputcompletion"
         ),
@@ -68,28 +68,18 @@ mod_input_completion_server <- function(id, iv){
       
       n_errors <- n_faulty - n_missing
       
-      # Update PB title
+      # Update feedback text title
       if(n_errors > 0 & n_missing == 0){
-        title <- glue::glue("Completion Status: {n_errors} error(s)")
+        feedback <- glue::glue("{n_errors} error(s)")
       }else if(n_errors == 0 & n_missing > 0){
-        title <- glue::glue("Completion Status: {n_missing} input(s) missing")
+        feedback <- glue::glue("{n_missing} input(s) missing")
       }else if(n_errors > 0 & n_missing > 0){
-        title <- glue::glue("Completion Status: {n_errors} error(s) + {n_missing} input(s) missing")
+        feedback <- glue::glue("{n_errors} error(s) + {n_missing} input(s) missing")
       }else{
-        title <- glue::glue("Completion Status: All good!")  
+        feedback <- glue::glue("All good!")  
       }
       
       # Update PB colour
-      # if (completion_pctg < 70) {
-      #   status <- "danger"
-      # } else if (completion_pctg >= 70 & completion_pctg < 80) {
-      #   status <- "warning"
-      # } else if(completion_pctg >= 80 & completion_pctg < 99){
-      #   status <- "info"
-      # } else{
-      #   status <- "success"
-      # }
-      
       if (completion_pctg < 100) {
         status <- "danger"
       } else{
@@ -101,15 +91,10 @@ mod_input_completion_server <- function(id, iv){
       shinyWidgets::updateProgressBar(
         id = "pbcmpltn",
         value = completion_pctg,
-        status = status,
-        #title = title
+        status = status
       )
       
-      
-      output$cmpltstatus <- renderText({
-        stringr::str_replace(title, "Completion Status:", "") 
-      })
-      
+      output$cmpltstatus <- renderText({ feedback })
       
     })
     

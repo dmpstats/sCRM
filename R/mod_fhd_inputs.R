@@ -13,6 +13,12 @@ mod_fhd_inputs_ui <- function(id){
   
   tagList(
     
+    # waiter::autoWaiter(
+    #   id = c(ns("gen_dflt_plot"), ns("gen_other_plot"), ns("site_plot")), 
+    #   html = waiter::spin_loaders(4),
+    #   color = "black"
+    #   ),
+    
     # Hidden textInputs to allow for shinyvalidate on user's uploaded data
     shinyjs::hidden(
       purrr::map(
@@ -56,7 +62,7 @@ mod_fhd_inputs_ui <- function(id){
         contentWidth = 10,
         
         shinyWidgets::verticalTabPanel(
-          title = "Generic FHD",
+          title = span("Generic FHD", class = "vtab-title"),
           icon = icon("globe"), 
           box_height = "215px",
           uiOutput(ns("genfhd_inputs"))
@@ -83,8 +89,16 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
+    
     env <- environment()
     env$prev_fhd_type <- c("gen_fhd")
+    
+    
+    # Initialize waiter screens for fhd plots ---------------------------------
+    w <- waiter::Waiter$new(
+      id = c(ns("gen_dflt_plot"), ns("gen_other_plot"), ns("site_plot")),
+      html = waiter::spin_loaders(15, color = "#434C5E") #f37403")
+      )
     
     
     # -- Input Validation  ---------------------------------------------------
@@ -127,8 +141,8 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
     iv$add_validator(site_iv)
     iv$add_validator(usergen_iv)
     iv$add_validator(dfltgen_iv)
-
-
+    
+    
     
     # -- Dynamic UI: Append/Remove vertical tabset panels ------------------------
     
@@ -168,7 +182,7 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
           shinyWidgets::appendVerticalTab(
             inputId = ns("vtbpnl"),
             shinyWidgets::verticalTabPanel(
-              title = "Site-specific FHD",
+              title = span("Site-specific FHD", class = "vtab-title"),
               icon = icon("location-dot", verify_fa = FALSE),
               box_height = "215px",
               
@@ -319,9 +333,38 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
       
     })
     
-
     
-    # User's FHD data loading  -------------------------------------------------
+    
+    # Generic FHD data ---------------------------------------------------------
+    
+    ## Default data (Johnson's et al, 2014) ----------------------------------
+    
+    # Both datasets are available as list elements of `spp_dflts`, one of the
+    # {sCRM} datasets
+    
+    gen_fhd_dflt <- reactive({
+      
+      w$show()
+      
+      if(!band_mode()){
+        
+        # subset bootstraps for current species
+        dplyr::filter(spp_dflts, spp_id == label2id(spp_label)) %>%
+          dplyr::pull(fhd_boot) %>%
+          purrr::pluck(1)
+        
+      }else{
+        
+        # subset estimates for current species
+        dplyr::filter(spp_dflts, spp_id == label2id(spp_label)) %>%
+          dplyr::pull(fhd_est) %>%
+          purrr::pluck(1) %>%
+          dplyr::rename(prop = est)
+      }
+    })
+    
+    
+    ## User's FHD data ---------------------------------------------------------
     
     # Read-in generic FHD uploaded by user, with formatting dependent on
     # band_mode.
@@ -334,148 +377,138 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
     
     gen_fhd_other <- reactive( {
       
-      req(input$"flinput-othergenfhd")
+      #req(input$"flinput-othergenfhd")
       
-      input_id <- "flinput-othergenfhd"
       
-      # get file info
-      file <- input[[input_id]]
-      
-      # hide any old feedback message, if existent
-      shinyFeedback::hideFeedback(input_id)
-      
-      # load -> validate -> process data
-      if(!band_mode()){
-        # loading for FHD boostrap replicates
-        fhd <- load_fhd_boot(name = file$name, path = file$datapath) 
+      # Only upload if user has specified a file to read from. Otherwise return NULL
+      if(not_null(input$"flinput-othergenfhd")){
+        
+        w$show()
+        
+        input_id <- "flinput-othergenfhd"
+        
+        # get file info
+        file <- input[[input_id]]
+        
+        # hide any old feedback message, if existent
+        shinyFeedback::hideFeedback(input_id)
+        
+        # load -> validate -> process data
+        if(!band_mode()){
+          # loading for FHD boostrap replicates
+          g_fhd <- load_fhd_boot(name = file$name, path = file$datapath) 
+        }else{
+          # loading for FHD estimates
+          g_fhd <- load_fhd_est(name = file$name, path = file$datapath) 
+        }
+        
+        # Provide error feedback or return processed daa
+        if(g_fhd$error){
+          # {shinyFeedback}
+          shinyFeedback::showFeedbackDanger(input_id, text = g_fhd$msg)
+          # Update tracer with error message, which is being tracked by {shinyvalidate}
+          updateTextInput(inputId = "othergenfhd_OK", value = g_fhd$msg)
+          NULL
+        }else{
+          # Update tracer with OK'ed data
+          updateTextInput(inputId = "othergenfhd_OK", value = "yes")
+          # return data
+          g_fhd$dt
+        }
+        
       }else{
-        # loading for FHD estimates
-        fhd <- load_fhd_est(name = file$name, path = file$datapath) 
-      }
-      
-      # Provide error feedback or return processed daa
-      if(fhd$error){
-        
-        # {shinyFeedback}
-        shinyFeedback::showFeedbackDanger(input_id, text = fhd$msg)
-        
-        # Update tracer with error message, which is being tracked by {shinyvalidate}
-        updateTextInput(inputId = "othergenfhd_OK", value = fhd$msg)
         NULL
-        
-      }else{
-        
-        # Update tracer with OK'ed data
-        updateTextInput(inputId = "othergenfhd_OK", value = "yes")
-        
-        # return data
-        fhd$dt
       }
-      
     })
     
     
-    # Analogous to previous chunk, for site-specific FHD uploaded by user
+    # Site-specific FHD data ---------------------------------------------------------
+    
+    # Read-in site FHD uploaded by user, with formatting dependent on band_mode.
+    # As above, content data also validated on the fly using both
+    # {shinyFeedback} and {shinyvalidate} together
+    
     site_fhd <- reactive({
       
-      req(input$"flinput-sitefhd")
+      #req(input$"flinput-sitefhd")
       
-      input_id <- "flinput-sitefhd"
-      file <- input[[input_id]]
-      
-      shinyFeedback::hideFeedback(input_id)
-      
-      # load -> validate -> process data
-      if(!band_mode()){
-        fhd <- load_fhd_boot(file$name, file$datapath)
+      # Only upload if user has specified a file to read from. Otherwise return NULL.
+      if(not_null(input$"flinput-sitefhd")){
+        
+        w$show()
+        
+        input_id <- "flinput-sitefhd"
+        file <- input[[input_id]]
+        
+        shinyFeedback::hideFeedback(input_id)
+        
+        # load -> validate -> process data
+        if(!band_mode()){
+          s_fhd <- load_fhd_boot(file$name, file$datapath)
+        }else{
+          s_fhd <- load_fhd_est(file$name, file$datapath)
+        }
+        
+        # Provide error feedback or return processed data
+        if(s_fhd$error){
+          shinyFeedback::showFeedbackDanger(input_id, text = s_fhd$msg)
+          updateTextInput(inputId = "sitefhd_OK", value = s_fhd$msg)
+          NULL
+        }else{
+          updateTextInput(inputId = "sitefhd_OK", value = "yes")
+          s_fhd$dt
+        }
+        
       }else{
-        fhd <- load_fhd_est(file$name, file$datapath)
-      }
-      
-      # Provide error feedback or return processed daa
-      if(fhd$error){
-        shinyFeedback::showFeedbackDanger(input_id, text = fhd$msg)
-        updateTextInput(inputId = "sitefhd_OK", value = fhd$msg)
         NULL
-      }else{
-        updateTextInput(inputId = "sitefhd_OK", value = "yes")
-        fhd$dt
       }
-      
     })
     
     
     
     # Output Plots -------------------------------------------------------------
     
-    # Default generic FHD bootstrap plots
+    # Default generic FHD
     output$gen_dflt_plot <- renderPlot({
+      
+      # Validation under {shinyvalidate}
+      if(is.null(gen_fhd_dflt())){
+        updateTextInput(inputId = "dfltgenfhd_OK", value = "Default FHD not available")
+      }else{
+        updateTextInput(inputId = "dfltgenfhd_OK", value = "yes")
+      }      
+      
+      # Validation and feedback to plot rendering area
+      validate(
+        need(!is.null(gen_fhd_dflt()),
+             paste0("Error: default FHD data for ", spp_label, " not available. ",
+                    "Select 'Other' to upload data from a different source." )),
+        errorClass = "valErrorMsgClass"
+      )
+      
       
       if(!band_mode()){
         
-        # subset bootstraps for current species
-        #fhd_boot <- Johnston_fhd_boot[[label2id(spp_label)]]
-        
-        fhd_boot <- dplyr::filter(spp_dflts, spp_id == label2id(spp_label)) %>%
-          dplyr::pull(fhd_boot) %>%
-          purrr::pluck(1)
-        
-        
-        # Validation under {shinyvalidate}
-        if(is.null(fhd_boot)){
-          updateTextInput(inputId = "dfltgenfhd_OK", value = "Default FHD not available")
-        }else{
-          updateTextInput(inputId = "dfltgenfhd_OK", value = "yes")
-        }
-        
-        
-        validate(
-          need(!is.null(fhd_boot),
-               paste0("Error: default FHD data for ", spp_label, " not available. ",
-                      "Select 'Other' to upload data from a different source." )),
-          errorClass = "valErrorMsgClass"
-        )
-        
-        
         # Heatmap plot
         fhd_boots_heatmap(
-          data = fhd_boot,
+          data = gen_fhd_dflt(),
           height = height, 
           spp_label = spp_label
         )
         
       }else{
         
-        # subset estimates for current species
-        fhd_est <- dplyr::filter(spp_dflts, spp_id == label2id(spp_label)) %>%
-          dplyr::pull(fhd_est) %>%
-          purrr::pluck(1)
-        
-        #fhd_est <- Johnston_fhd_est[[label2id(spp_label)]]
-        
-        # Validation under {shinyvalidate}
-        if(is.null(fhd_est)){
-          updateTextInput(inputId = "dfltgenfhd_OK", value = "Default FHD not available")
-        }else{
-          updateTextInput(inputId = "dfltgenfhd_OK", value = "yes")
-        }
-        
-        validate(
-          need(!is.null(fhd_est),
-               paste0("Error: default FHD data for ", spp_label, " not available. ",
-                      "Select 'Other' to upload data from a different source." )),
-          errorClass = "valErrorMsgClass"
-        )
-        
         # lolli plot
         fhd_lolli_plt(
-          data = fhd_est, 
+          data = gen_fhd_dflt(), 
           height = height, 
-          prop = est, 
+          prop = prop, 
           spp_label = spp_label
         )
       }
+      
     })
+    
     
     
     # User's generic FHD plots
@@ -563,10 +596,45 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
     )
     
     
-    # -- Module Outputs ------------------------------------------------------
-
+    
+    
+    # -- Data pre-processing for Module Outputs --------------------------------
+    
+    fhd <- reactive({
+      
+      req(input$gensrc)
+      
+      # Generic FHD - select chosen data source
+      if("gen_fhd" %in% input$type){
+        if(input$gensrc == 'default'){
+          g_fhd <- gen_fhd_dflt()
+        }else if(input$gensrc == 'other'){
+          g_fhd <- gen_fhd_other()
+        }
+      }else{
+        g_fhd <- NULL
+      }
+      
+      # Site-specific FHD
+      if("site_fhd" %in% input$type){
+        s_fhd <- site_fhd()
+      }else{
+        s_fhd <- NULL
+      }
+      
+      # list comprising types of FHD data
+      list(
+        fhd_type = input$type,
+        gen_fhd = g_fhd,
+        site_fhd = s_fhd
+      )
+    })
+    
+    
+    # -- Module Outputs --------------------------------------------------------
     list(
-      iv = iv
+      iv = iv,
+      fhd = fhd
     )
 
   })

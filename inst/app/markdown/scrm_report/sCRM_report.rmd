@@ -1,0 +1,132 @@
+---
+title: "sCRM Run Report: Collision Risk Estimates"
+output: 
+  #word_document
+  officedown::rdocx_document:
+    reference_docx: sCRM_report_template.docx
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+abstract: "This is an automatically generated report created by the stochastic Collision Risk Model (sCRM) web application ([website](https://dmpstats.shinyapps.io/sCRM), [repository](https://github.com/dmpstats/sCRM)), which acts as a wrapper for the `{stochLAB}` [package](https://www.github.com/HiDef-Aerial-Surveying/stochLAB).
+
+The seabird collision risk model was originally developed by [Band (2012)](https://www.bto.org/sites/default/files/u28/downloads/Projects/Final_Report_SOSS02_Band1ModelGuidance.pdf), and subsequently extended by [Masden (2015)](https://data.marine.gov.scot/dataset/developing-avian-collision-risk-model-incorporate-variability-and-uncertainty) to incorporate uncertainty of input parameters in collision estimates.
+
+This report presents the main results of a user's specified sCRM run. Summary graphs and tables are provided for each one of the species considered within the specified wind farm scenarios."
+
+params:
+  scrm_inputs: NA
+  scrm_results: NA
+  band_mode: NA
+  niter: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, fig.cap.style = "Image Caption", fig.topcaption = TRUE)
+library(flextable)
+library(officedown)
+library(officer)
+library(purrr)
+library(ggplot2)
+library(glue)
+
+```
+
+
+```{r}
+fpar(
+  ftext(
+    text = glue::glue(
+      "NB: This is a prototype document. The inclusion of additional sections",
+      " (e.g. tables with input values for each scenario) is currently under",
+      " consideration."),  
+    prop = fp_text_lite(color = "#FF4747", font.size = 9)
+  )
+)
+```
+
+
+# sCRM Run Overview
+
+
+- Simulation mode: `r ifelse(params$band_mode, "Deterministic", "Stochastic")`
+- Number of iterations: `r ifelse(params$band_mode, "Not applicable", params$niter)`
+- Wind farm scenarios specified:
+
+
+```{r, results='asis'}
+walk(params$scrm_results, function(wf){
+  cat("   - __", wf[[1]]$wf_label, "__, containing the following species: \n", sep = "")
+  walk(wf, function(spp_results){
+      cat("      -", spp_results$spp_label, "\n")
+  })
+})
+
+
+```
+
+
+
+```{r}
+fig_captions <- list()
+
+wfs <- names(params$scrm_results)
+i <- 1
+
+for(wf_id in wfs){
+  spps <- names(params$scrm_results[[wf_id]])
+  for(spp_id in spps){
+    p <- params$scrm_results[[wf_id]][[spp_id]]$plot
+    pb <- ggplot_build(p)
+    if(params$band_mode == FALSE){
+      fig_captions[[i]] <- glue("{pb$plot$labels$title}. {pb$plot$labels$subtitle}")  
+    }else{
+      fig_captions[[i]] <- pb$plot$labels$title
+    }
+    
+    i <- i + 1
+  }
+}
+```
+
+
+
+
+```{r results = 'asis', fig.cap = unlist(fig_captions), fig.asp = 0.63, fig.width = 6.5,  dpi = 300, tab.cap.style = "Table Caption"}
+
+iwalk(params$scrm_results, function(wf, wf_id){
+
+  #fig.asp= 0.7, fig.width = 12,
+
+  cat('\n')
+  cat("#", wf[[1]]$wf_label, "\n")
+
+  iwalk(wf, function(spp_results, spp_id){
+
+    cat("##", spp_results$spp_label, "\n")
+    
+    p <- spp_results$plot +
+      ggplot2::labs(title = NULL, subtitle = NULL)
+    
+    print(p)
+
+   cat('\n')
+
+   spp_results$summ_ft %>%
+     fontsize(size = 9, part = "all") %>%
+     font(fontname = "Calibri") %>%
+     set_table_properties(layout = "autofit") %>%
+     flextable_to_rmd()
+
+  })
+})
+
+```
+
+
+
+# References
+
+Band, B. (2012) Using a collision risk model to assess bird collision risks for offshore windfarms. SOSS report, The Crown Estate.
+
+Masden, E (2015) Developing an avian collision risk model to incorporate variability and uncertainty. Scottish Marine and Freshwater Science Report Vol 6 No 14. Marine Scotland Science. ISSN: 2043-7722 DOI: 10.7489/1659-1
+
+
+

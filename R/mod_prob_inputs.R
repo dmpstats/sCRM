@@ -54,6 +54,9 @@ mod_prob_inputs_ui <- function(id, pars_lkp, band_mode){
 
 #' prob_inputs Server Functions
 #'
+#' @import shinyvalidate
+#' @import zeallot
+#'
 #' @noRd 
 mod_prob_inputs_server <- function(id, pars_lkp, band_mode, 
                                    plot_fill = "olivedrab"){
@@ -65,13 +68,18 @@ mod_prob_inputs_server <- function(id, pars_lkp, band_mode,
   moduleServer( id, function(input, output, session){
     ns <- session$ns
     
+    # list to gather reactive values from probability parameters inputs
+    # A non-reactive list whose elements are reactive
+    prob_inputs <- list()
+    #prob_inputs <- reactiveValues()
+    
     iv <- InputValidator$new()
     
     # Generate module server for each row (i.e. parameter) AND add child
     # validator to module's InputValidator object
     purrr::pwalk(pars_lkp, function(par_id, par_label, par_dist, par_name, ...){
       
-      prob_input_row_result <- mod_prob_inputs_row_server(
+      c(prob_input_iv, prob_input_dt) %<-% mod_prob_inputs_row_server(
         id = par_id,
         par_label = par_label,
         par_dist = par_dist,
@@ -79,13 +87,18 @@ mod_prob_inputs_server <- function(id, pars_lkp, band_mode,
         band_mode = band_mode, 
         plot_fill = plot_fill)
       
-      iv$add_validator(prob_input_row_result$iv)
+      iv$add_validator(prob_input_iv)
+      
+      # needs global assignement as `prob_inputs` is non-reactive
+      prob_inputs[[par_name]] <<- prob_input_dt
+      
     })
     
-
+    
     # return InputValidator object
     list(
-      iv = iv
+      iv = iv,
+      prob_inputs = prob_inputs
     )
     
   })

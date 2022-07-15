@@ -97,7 +97,8 @@ load_dens <- function(name, path, pctl_dt = TRUE){
                 dplyr::rename(pctl = Per) %>%
                 dplyr::select(pctl, matches(month.abb)) %>%
                 dplyr::rename_with(.fn = ~month.name[match(., month.abb)], .cols = -pctl) %>%
-                dplyr::arrange(pctl)
+                dplyr::arrange(pctl) %>%
+                tidyr::drop_na()
               
               list(error = FALSE, dt = dt)         
             }

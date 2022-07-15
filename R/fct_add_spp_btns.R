@@ -16,7 +16,26 @@ add_spp_btns <- function(slctize_id,
                          drpdwn_btn_id, 
                          dwnl_btn_id, 
                          file_input_id,
-                         dpdn_close_id){
+                         dpdn_close_id,
+                         wf_label){
+  
+  
+  # Start-up species labels
+  spp_choices <- sort(c("Demo Species", "Arctic Skua", "Northern Fulmar", "Great Black-backed Gull",
+                        "Common Guillemot", "Northern Gannet", "Black-legged Kittiwake",
+                        "Lesser Black-Backed Gull", "Little Auk", "Atlantic Puffin",
+                        "Razorbill", "Arctic Tern", "Black-headed Gull",
+                        "Black-throated Diver", "Common Gull", "Common Scoter",
+                        "Common Tern", "Cormorant", "Eider", "European Shag",
+                        "Herring Gull", "Little Gull", "Manx Shearwater",
+                        "Red-throated Diver", "Sandwich Tern"))
+  
+  
+  # Add 2 demo species for dev mode
+  if(golem::app_dev()){
+    spp_choices <- c(spp_choices, "Demo Species 2", "Demo Species 3")
+  }
+  
   
   fluidRow(
     col_6(
@@ -36,19 +55,18 @@ add_spp_btns <- function(slctize_id,
         fluidRow(
           shinydashboardPlus::box(
             width = 12,
-            title = "Select/Add species in wind farm",
+            title = glue::glue("Add species in {wf_label}"),
             status = "primary", 
+            # info_dropdown(
+            #   inputId = ns("wfinfo"),
+            #   placement = "bottom-start",
+            #   md_path =  "inst/app/www/info_buttons_docs/wf_features.md"
+            # ),
+            helpText("Select species from provided list or type to add a new species"),
             selectizeInput(
               inputId = slctize_id,
               label=NULL,
-              choices = sort(c("Demo Species", "Arctic Skua", "Northern Fulmar", "Great Black-backed Gull",
-                               "Common Guillemot", "Northern Gannet", "Black-legged Kittiwake",
-                               "Lesser Black-Backed Gull", "Little Auk", "Atlantic Puffin",
-                               "Razorbill", "Arctic Tern", "Black-headed Gull",
-                               "Black-throated Diver", "Common Gull", "Common Scoter",
-                               "Common Tern", "Cormorant", "Eider", "European Shag",
-                               "Herring Gull", "Little Gull", "Manx Shearwater",
-                               "Red-throated Diver", "Sandwich Tern")),
+              choices = spp_choices,
               multiple=TRUE,
               selected = "Demo Species",
               options = list(
@@ -116,6 +134,8 @@ add_spp_btns <- function(slctize_id,
         style = "material-circle",
         tooltip = shinyWidgets::tooltipOptions(placement = "bottom",
                                                title = "Import inputs"),
+        p(tags$em("Note: This feature is still under development and currently this panel and its UI elements are simply acting as placeholders."), 
+            style = "color: red; font-size: 13px; line-height: 17px"),
         h5(strong("Upload Input Values")),
         helpText("Values of input parameters for multiple species can be 
                  automatically populated via a spreadsheets file"),

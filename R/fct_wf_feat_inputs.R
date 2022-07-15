@@ -53,6 +53,20 @@ wf_feat_inputs <- function(ns = ns, inputs_width = "100%", is_demo = FALSE){
       label = "Tidal Offset (m)", #label.help("Tidal Offset (m)", "lbl_tidalOffset"),
       value = if(is_demo) 2.1 else NULL, #startup_vals$tidal_offset,
       min = 0, 
-      step = 0.1)
+      step = 0.1),
+    
+  
+    # --- Large array correction
+    strong("Large Array Correction"), 
+    tagAppendAttributes(
+      shinyWidgets::switchInput(
+        inputId = ns("lac"),
+        inline = FALSE, 
+        value = TRUE,
+        size = "small",
+        #onStatus = "success"
+      ),
+      style = "padding-top: 10px"
+    )
   )
 }

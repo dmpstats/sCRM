@@ -162,6 +162,8 @@ mod_monthly_hotab_server <- function(id, band_mode, startup_tab, is_pdist,
       
       if(is_pdist){
         
+        #browser()
+        
         hot_to_r(input$hotab) %>%
           tibble::rownames_to_column(var="Variable") %>%
           tidyr::pivot_longer(January:December) %>%

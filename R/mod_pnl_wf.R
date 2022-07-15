@@ -19,13 +19,10 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
   
   tagList(
     
-    # tags$script("$(function () {$('[data-toggle=\"popover\"]').popover()})"),
-    
     # Trick with hidden textInput to allow shinyvalidate on rhandsontable
     shinyjs::hidden(
       textInput(inputId = ns("hotWdSpdRln_ok"), label = "", value = "yes")
     ),
-    
     
     # Input completion status tracker
     mod_input_completion_ui(
@@ -33,10 +30,8 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
       pb_title = glue::glue("{wf_label} Parameters")
       ),
     
-    
     fluidRow(
-      style = 'overflow-y:scroll; height:71vh !important; overflow-x: hidden;',
-      
+      style = 'overflow-y:scroll; height:75vh !important; overflow-x: hidden;',
       
       fluidRow(
         # Wind farm Features ----------------------------------------------------
@@ -51,13 +46,13 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
             dropdownMenu = info_dropdown(
               inputId = ns("wfftinfo"),
               placement = "bottom-start",
-              md_path =  "inst/app/www/info_buttons_docs/wf_features.md"
+              md_path =  "inst/app/markdown/info_buttons_docs/wf_features.md"
             ),
             
-            wf_feat_inputs(ns = ns, inputs_width = "90%", is_demo),
-            br()
+            wf_feat_inputs(ns = ns, inputs_width = "90%", is_demo)
           )
         ),
+        
         # Turbine Features ----------------------------------------------------
         col_10(
           shinydashboardPlus::box(
@@ -69,7 +64,7 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
             dropdownMenu = info_dropdown(
               inputId = ns("trbnftinfo"),
               placement = "bottom-end", 
-              md_path = "inst/app/www/info_buttons_docs/trbn_features.md"
+              md_path = "inst/app/markdown/info_buttons_docs/trbn_features.md"
             ),
             
             fluidRow(
@@ -91,27 +86,24 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
                   dropdownMenu = info_dropdown(
                     inputId = ns("pitchrotinfo"),
                     placement = "bottom-end", 
-                    md_path = "inst/app/www/info_buttons_docs/pitch_rotationspeed.md"
+                    md_path = "inst/app/markdown/info_buttons_docs/pitch_rotationspeed.md"
                   ),
                   
-                  # p("Choose between simulating rotor speed and pitch from 
-                  #        probability distributions OR from a relationship with 
-                  #        wind speed"),
-                  p("Choose how to incorporate uncertainty in blade pitch and rotation speed"),
+                  #p("Choose how to incorporate uncertainty in blade pitch and rotation speed"),
                   shinyWidgets::radioGroupButtons(
                     inputId = ns("rtn_pitch_opt"),
                     individual = TRUE,
-                    justified = TRUE, 
-                    label = NULL,
-                    width = "60%",
-                    choices = c("Truncated Normal Distributions" = "probDist",
-                                "Relationship with Wind Speed" = "windSpeedReltn"),
+                    label = "Input type",
+                    #width = "55%",
+                    choices = c("Trunc. Normal Distribution" = "probDist",
+                                "Wind speed Relationship" = "windSpeedReltn"),
                     checkIcon = list(yes = tags$i(class = "fa fa-circle",
                                                   style = "color: #2D78C3"),
                                      no = tags$i(class = "fa fa-circle-o",
                                                  style = "color: #2D78C3"))),
                   #br(),
                   hr(),
+                  
                   conditionalPanel(
                     condition = "input.rtn_pitch_opt == 'probDist'", 
                     ns = ns,
@@ -188,7 +180,7 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
         dropdownMenu = info_dropdown(
           inputId = ns("trbnoperinfo"),
           placement = "bottom-end", 
-          md_path = "inst/app/www/info_buttons_docs/trbn_operation.md"
+          md_path = "inst/app/markdown/info_buttons_docs/trbn_operation.md"
         ),
         
         # Turbine monthly operation module
@@ -201,16 +193,28 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
 
 
 #' pnl_wf Server Functions
+#' 
+#' @param id string, the unique id of the module
+#' @param band_mode a `reactive()` logical, specifying whether the scrm
+#'   simulation should be deterministic (`TRUE`) or stochastic (`FALSE`)
+#' @param is_demo logical, defining if generating input panel for a demo
+#'   windfarm, for demonstration purposes
+#' @param wf_id string, the id of the farm
+#' @param scrm_inputs a `reactiveValues()` list, to store all input values
+#'   related with windfarm features. (Note: based on the “stratégie du petit r”
+#'   for sharing data between modules).
+#' 
 #'
 #' @import rhandsontable 
 #' @import shinyvalidate
 #' @import zeallot
 #' 
 #' @noRd
-mod_pnl_wf_server <- function(id, band_mode, is_demo){
+mod_pnl_wf_server <- function(id, band_mode, is_demo, wf_id,  wf_tp_id){
   
   stopifnot(is.reactive(band_mode))
   stopifnot(!is.reactive(is_demo))
+  stopifnot(!is.reactive(wf_id))
 
   # start-up data for rotation and pitch vs windspeed relationship. NAs for non-demo wfs
   if(is_demo){
@@ -228,30 +232,37 @@ mod_pnl_wf_server <- function(id, band_mode, is_demo){
     
     ns <- session$ns
     
+    # Initialize reactive valuas ---------------------------------------------
+    wf_inputs <- reactiveValues()
+    
+    
     # Sub-modules' server side ---------------------------------------------
     
-    blade_prob_inputs <- mod_prob_inputs_server(
-      id = "blade", 
-      pars_lkp = wf_pars_lookup %>% 
-        filter(par_name %in% c("bld_pitch", "rtn_speed")),
-      band_mode = band_mode,
-      plot_fill = wf_colour
-    )
+    c(blade_prob_iv, c(bld_pitch, rtn_speed) ) %<-% 
+      mod_prob_inputs_server(
+        id = "blade", 
+        pars_lkp = wf_pars_lookup %>% 
+          filter(par_name %in% c("bld_pitch", "rtn_speed")),
+        band_mode = band_mode,
+        plot_fill = wf_colour
+      )
     
-    windspeed_prob_inputs <- mod_prob_inputs_server(
-      id = "windspeed", 
-      pars_lkp = wf_pars_lookup %>% 
-        filter(par_name == "wind_spd"),
-      band_mode = band_mode, 
-      plot_fill = wf_colour
-    )
+    c(wind_spd_iv, c(wind_spd)) %<-% 
+      mod_prob_inputs_server(
+        id = "windspeed", 
+        pars_lkp = wf_pars_lookup %>% 
+          filter(par_name == "wind_spd"),
+        band_mode = band_mode, 
+        plot_fill = wf_colour
+      )
     
-    c(trbdwnt, wndavlb, trbn_oper_iv) %<-% mod_trbn_oper_server(
-      id = "trbnoper", 
-      band_mode = band_mode, 
-      is_demo = is_demo
-    )
-
+    c(trbdwnt, wndavlb, trbn_oper_iv) %<-% 
+      mod_trbn_oper_server(
+        id = "trbnoper", 
+        band_mode = band_mode, 
+        is_demo = is_demo
+      )
+    
     
     # Input validation -----------------------------------------------------
     
@@ -291,10 +302,10 @@ mod_pnl_wf_server <- function(id, band_mode, is_demo){
     rtnptch_wnd_iv$condition(~ input$rtn_pitch_opt == 'windSpeedReltn')
     
     # Append validator from windspeed probdist sub-module
-    rtnptch_wnd_iv$add_validator(windspeed_prob_inputs$iv)
+    rtnptch_wnd_iv$add_validator(wind_spd_iv)
     
     # Validation of hotable with blade pitch and rotation VS. windspeed
-    rtnptch_wnd_iv$add_rule("hotWdSpdRln_ok", sv_required())
+    rtnptch_wnd_iv$add_rule("hotWdSpdRln_ok", sv_required(message = ""))
     rtnptch_wnd_iv$add_rule("hotWdSpdRln_ok", ~ if(. != "yes") . )
 
 
@@ -303,7 +314,7 @@ mod_pnl_wf_server <- function(id, band_mode, is_demo){
     rtnptch_dst_iv$condition(~ input$rtn_pitch_opt == 'probDist')
     
     # Append validators from blade speed and pitch probdist sub-module
-    rtnptch_dst_iv$add_validator(blade_prob_inputs$iv)
+    rtnptch_dst_iv$add_validator(blade_prob_iv)
 
     # Append conditional validators to main validator as children
     iv$add_validator(rtnptch_wnd_iv)
@@ -318,7 +329,7 @@ mod_pnl_wf_server <- function(id, band_mode, is_demo){
       
       if(all(is.na(df))){ # check for empty table
         
-        updateTextInput(inputId = "hotWdSpdRln_ok", value = "Empty table")
+        updateTextInput(inputId = "hotWdSpdRln_ok", value = "")
         shinyjs::js$fontCol(ns("WdSpdRln_label"), '#dd4b39')
         output$WdSpdRtn_iv_fbck <- ({invisible()})
         
@@ -363,12 +374,50 @@ mod_pnl_wf_server <- function(id, band_mode, is_demo){
     })
     
     
-    ## Input completion tracker sub-module --------
+    ## Input completion tracker sub-module -------------------------------
     mod_input_completion_server(id = "inputstate", iv = iv)
     
     
-    ## Start displaying error feedback in UI  ------
+    ## Start displaying error feedback in UI  -------------------
     iv$enable()
+    
+    
+    
+    # Ui rendering for pitch and rotation speed data, based on band_mode -------------
+    observeEvent(band_mode(), {
+      
+      if(band_mode()){
+        
+        shinyWidgets::updateRadioGroupButtons( 
+          session = session, 
+          inputId = "rtn_pitch_opt",  
+          choices = c("Point Estimates" = "probDist"), 
+          selected = "probDist",
+          checkIcon = list(
+            yes = tags$i(class = "fa fa-circle",
+                         style = "color: #2D78C3"),
+            no = tags$i(class = "fa fa-circle-o",
+                        style = "color: #2D78C3")
+          )
+        )
+        
+      }else{
+        
+        shinyWidgets::updateRadioGroupButtons( 
+          session = session, 
+          inputId = "rtn_pitch_opt",  
+          choices = c("Trunc. Normal Distribution" = "probDist",
+                      "Wind speed Relationship" = "windSpeedReltn"),
+          # selected = "probDist",
+          checkIcon = list(
+            yes = tags$i(class = "fa fa-circle",
+                         style = "color: #2D78C3"),
+            no = tags$i(class = "fa fa-circle-o",
+                        style = "color: #2D78C3")
+          )
+        )
+      }
+    })
     
     
     # Rotation and pitch vs wind speed relationship ----------------------------
@@ -412,13 +461,23 @@ mod_pnl_wf_server <- function(id, band_mode, is_demo){
     })  
     
     
+    # Convert hot to data frame and store it in reactive, for multiple use in module
+    windspd_to_rtnspd_ptch <- reactive({
+      
+      hot_to_r(input$hotWindSpeedRltn) %>%
+        tidyr::drop_na()
+      
+      }) %>%
+      bindEvent(input$hotWindSpeedRltn)
+    
+    
     # Rotation speed Vs wind speed plot
     output$wndvsrot_plot <- renderPlot({
       
-      req(input$hotWindSpeedRltn)
+      req(windspd_to_rtnspd_ptch())
       
-      hot_to_r(input$hotWindSpeedRltn) %>%
-        tidyr::drop_na(rtn_speed) %>%
+      windspd_to_rtnspd_ptch() %>%
+        #tidyr::drop_na(rtn_speed) %>%
         area_plot(
           x = wind_speed, 
           y = rtn_speed,
@@ -432,10 +491,10 @@ mod_pnl_wf_server <- function(id, band_mode, is_demo){
     # Blade pitch Vs wind speed plot
     output$wndvsptch_plot <- renderPlot({
       
-      req(input$hotWindSpeedRltn)
+      req(windspd_to_rtnspd_ptch())
       
-      hot_to_r(input$hotWindSpeedRltn) %>%
-        tidyr::drop_na(bld_pitch) %>%
+      windspd_to_rtnspd_ptch() %>%
+        #tidyr::drop_na(bld_pitch) %>%
         area_plot(
           x = wind_speed, 
           y = bld_pitch,
@@ -447,8 +506,101 @@ mod_pnl_wf_server <- function(id, band_mode, is_demo){
     })
     
     
-    # Module Outputs ------------------------------------------------------
-    list(iv = iv)
+     
+    # Data processing for Module output ---------------------------------------
+    blade_pitch_rtn <- reactive({
+
+      req(input$rtn_pitch_opt)
+
+      if(input$rtn_pitch_opt == 'probDist'){
+        list(
+          opt = "probDist",
+          bld_pitch = bld_pitch(),
+          rtn_speed = rtn_speed()
+        )
+      }else{
+        list(
+          opt = "windSpeedReltn",
+          wind_spd = wind_spd(),
+          windspd_to_rtnspd_ptch = windspd_to_rtnspd_ptch()
+        )
+      }
+    })
+
+    
+
+
+    # # Storing input values in "global" `reactiveValues` list `scrm_inputs` -----------
+    # observe({
+    # 
+    #   scrm_inputs$wf_scens[[wf_id]]$wf_inputs <- list(
+    # 
+    #     valid = iv$is_valid(),
+    # 
+    #     wf_tp_id = wf_tp_id,
+    # 
+    #     wf_ftrs = list(
+    #       nturb = input$nturb,
+    #       lat = input$lat,
+    #       wfwidth = input$wfwidth,
+    #       tdloffset = input$tdloffset,
+    #       lac =  input$lac
+    #     ),
+    # 
+    #     trbn_ftrs = list(
+    #       nblades = input$nblades,
+    #       rtradius = input$rtradius,
+    #       airgap = input$airgap,
+    #       bladewth = input$bladewth,
+    #       blade_pitch_rtn = blade_pitch_rtn()
+    #     ),
+    # 
+    #     oper = list(
+    #       trbdwnt = trbdwnt(),
+    #       wndavlb = wndavlb()
+    #     )
+    #   )
+    # 
+    # })
+    
+    
+    
+    # Data processing for Module output ---------------------------------------
+    wf_inputs <- reactive({
+
+      list(
+
+        valid = iv$is_valid(),
+
+        wf_tp_id = wf_tp_id,
+
+        wf_ftrs = list(
+          nturb = input$nturb,
+          lat = input$lat,
+          wfwidth = input$wfwidth,
+          tdloffset = input$tdloffset,
+          lac =  input$lac
+        ),
+
+        trbn_ftrs = list(
+          nblades = input$nblades,
+          rtradius = input$rtradius,
+          airgap = input$airgap,
+          bladewth = input$bladewth,
+          blade_pitch_rtn = blade_pitch_rtn()
+        ),
+
+        oper = list(
+          trbdwnt = trbdwnt(),
+          wndavlb = wndavlb()
+        )
+      )
+      
+    })
+
+
+    # Module output ---------------------------------------
+    wf_inputs
     
   })
 }

@@ -428,7 +428,6 @@ densbird_pctl_plot <- function(data, pctl, spp_label){
     )) %>%
     dplyr::mutate(dplyr::across(everything(), .fns = dplyr::lead, .names= "{.col}_end")) %>%
     dplyr::slice(1:(n()-1)) %>%
-    tidyr::drop_na() %>%
     tidyr::pivot_longer(-c(pctl, pctl_end), names_to = "month", values_to = "dens") %>%
     dplyr::mutate(
       pos = if_else(stringr::str_detect(month, "end"), "end", "start"), 
@@ -465,61 +464,6 @@ densbird_pctl_plot <- function(data, pctl, spp_label){
     )
 }
 
-# densbird_pctl_plot <- function(data, pctl, spp_label){
-#   
-#   dt <- data %>%
-#     dplyr::rename(pctl = {{ pctl }}) %>%
-#     dplyr::arrange(pctl) %>%
-#     tidyr::pivot_longer(
-#       cols = -pctl, 
-#       names_to = "month", 
-#       values_to = "dens") %>%
-#     dplyr::mutate( month = factor(month, levels = month.name))
-#   
-#   edge_pctls <- dt %>%
-#     dplyr::filter(pctl %in% c(min(pctl), max( pctl))) %>%
-#     tidyr::pivot_wider(names_from = pctl, id_cols = month, values_from = dens)
-#   
-#   names(edge_pctls) <- c("month", "min_pctl", "max_pctl")
-#   
-#   pctiles <- unique(dt$pctl)
-#   col_pal <- MetBrewer::met.brewer("Peru2", n = length(pctiles))
-#   
-#   dt %>%
-#     dplyr::mutate(
-#       shape_size = ifelse(pctl <= 50, pctl, 100 - pctl),
-#       pctl = factor(pctl)
-#     ) %>%
-#     ggplot2::ggplot(aes(x = month, y = dens)) +
-#     ggplot2::geom_segment(
-#       aes(x = month, xend = month, y = min_pctl, yend = max_pctl), 
-#       linetype = "dashed", 
-#       col = "gray45", data = edge_pctls) +
-#     #ggplot2::geom_point(aes(fill = pctl, size = shape_size), shape = 22) +
-#     #ggplot2::geom_point(aes(fill = pctl, size = as.numeric(pctl)), shape = 22) +
-#     ggplot2::geom_point(aes(fill = pctl), shape = 22, size = 4) +
-#     ggplot2::guides(
-#       fill = ggplot2::guide_legend(
-#         title = "Percentile", 
-#         reverse = TRUE, 
-#         override.aes = list(size = 6)
-#       ),
-#       size = "none"
-#     ) +
-#     ggplot2::scale_fill_manual(values = col_pal) +
-#     #ggplot2::scale_size(range = c(2, 7)) +
-#     ggplot2::labs(
-#       x = "",
-#       y = bquote('Number of birds per' ~km^2),
-#       title = paste0("Percentile estimates of monthly density of ", spp_label)
-#     )
-#   
-# }
-
-
-
-
-
 
 
 
@@ -531,34 +475,6 @@ densbird_pctl_plot <- function(data, pctl, spp_label){
 #' @param fill a character string, the histograms filling color
 #' 
 #' @noRd
-# densbird_draws_plot <- function(data, spp_label, fill = "#d39a2d"){
-#   
-#   data %>%
-#     tidyr::pivot_longer(
-#       cols = everything(), 
-#       names_to = "month", 
-#       values_to = "dens") %>%
-#     dplyr::mutate( month = factor(month, levels = month.name)) %>%
-#     ggplot2::ggplot(aes(x = dens, y = month, height = stat(density))) + 
-#     ggridges::geom_density_ridges(
-#       fill = fill,
-#       alpha = 0.5,
-#       stat = "binline", 
-#       bins = 50, 
-#       scale = 1,#0.95,   
-#       draw_baseline = TRUE
-#     ) +
-#     #ggridges::theme_ridges(center_axis_labels = TRUE) +
-#     #ggridges::theme_ridges(grid = FALSE, center_axis_labels = TRUE) +
-#     ggplot2::coord_flip() +
-#     labs(
-#       x = bquote('Number of birds per' ~km^2),
-#       y = "", 
-#       title = paste0("Histograms for randm draws of monthly density of ", spp_label)
-#     )
-# }
-
-
 densbird_draws_plot <- function(data, spp_label, fill = "#d39a2d"){
   
   data %>%
@@ -578,8 +494,8 @@ densbird_draws_plot <- function(data, spp_label, fill = "#d39a2d"){
       stroke = 1.5,
       outline_bars = TRUE) +
     labs(
-      x = bquote('Number of birds per' ~km^2),
-      y = "", 
+      y = bquote('Number of birds per' ~km^2),
+      x = "", 
       title = paste0("Histograms for randm draws of monthly density of ", spp_label)
     )
 }
