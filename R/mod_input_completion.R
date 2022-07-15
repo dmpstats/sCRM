@@ -7,8 +7,10 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_input_completion_ui <- function(id){
+mod_input_completion_ui <- function(id, pb_title = ""){
+  
   ns <- NS(id)
+  
   tagList(
     
     # Completeness progress bar  -----------------------------------------------
@@ -21,14 +23,18 @@ mod_input_completion_ui <- function(id){
             size = "xs",
             status = "success",
             striped = FALSE,
-            title = "Completion Status"
+            title = pb_title, #"Demo Windfarm Parameters", #"Completion Status"
           ),
           class = "pb-inputcompletion"
+        ),
+        div(
+          style = "font-size: 13px; font-style: italic", #float: right",
+          textOutput(outputId = ns("cmpltstatus"))
         )
       )
     ),
     
-    HTML("<hr style='height:1px;border:none;color: #b1b3b8; background-color:#b1b3b8; margin-top: 0px; margin-bottom: 12px' />"),
+    HTML("<hr style='height:1px;border:none;color: #b1b3b8; background-color:#b1b3b8; margin-top: 8px; margin-bottom: 13px' />"),
     
   )
 }
@@ -68,7 +74,7 @@ mod_input_completion_server <- function(id, iv){
       }else if(n_errors == 0 & n_missing > 0){
         title <- glue::glue("Completion Status: {n_missing} input(s) missing")
       }else if(n_errors > 0 & n_missing > 0){
-        title <- glue::glue("Completion Status: {n_errors} error(s) + {n_missing} missing")
+        title <- glue::glue("Completion Status: {n_errors} error(s) + {n_missing} input(s) missing")
       }else{
         title <- glue::glue("Completion Status: All good!")  
       }
@@ -96,8 +102,15 @@ mod_input_completion_server <- function(id, iv){
         id = "pbcmpltn",
         value = completion_pctg,
         status = status,
-        title = title
+        #title = title
       )
+      
+      
+      output$cmpltstatus <- renderText({
+        stringr::str_replace(title, "Completion Status:", "") 
+      })
+      
+      
     })
     
  

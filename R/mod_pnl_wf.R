@@ -8,7 +8,7 @@
 #'
 #' @import shiny
 #' @importFrom dplyr filter
-mod_pnl_wf_ui <- function(id, band_mode, is_demo){
+mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
   
   ns <- NS(id)
   
@@ -28,11 +28,14 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo){
     
     
     # Input completion status tracker
-    mod_input_completion_ui(id = ns("inputstate")),
+    mod_input_completion_ui(
+      id = ns("inputstate"), 
+      pb_title = glue::glue("{wf_label} Parameters")
+      ),
     
     
     fluidRow(
-      style = 'overflow-y:scroll; height:72vh !important; overflow-x: hidden;',
+      style = 'overflow-y:scroll; height:71vh !important; overflow-x: hidden;',
       
       
       fluidRow(

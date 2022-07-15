@@ -120,6 +120,8 @@ add_wf_btns <- function(dpdn_add_wf_id,
         style = "material-circle",
         tooltip = shinyWidgets::tooltipOptions(placement = "bottom",
                                                title = "Import inputs"),
+        p(tags$em("Note: This feature is still under development and currently this panel and its UI elements are simply acting as placeholders."), 
+          style = "color: red; font-size: 13px; line-height: 17px"),
         h5(strong("Upload Input Values")),
         helpText("Values of input parameters for multiple scenarios can be 
                  automatically populated via a spreadsheets file"),

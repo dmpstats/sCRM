@@ -118,7 +118,8 @@ mod_spp_in_wf_server <- function(id, band_mode, wf_label){
             style = "padding-top: 10px",
             mod_pnl_spp_ui(
               id = ns(paste0('pnl-spp-', spp_id)),
-              spp_label = spp_label,
+              spp_label = spp_label, 
+              wf_label = wf_label,
               band_mode = isolate(band_mode())
             )
           )
