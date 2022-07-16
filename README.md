@@ -23,8 +23,8 @@ It is intended to eventually replace the
 
 ## How to Use
 
-Users have the option to use an online version of the app or download a
-copy of the code and run it locally.
+Users have the option to use an online version of the app or install and
+run it locally.
 
 ### On a local machine
 
