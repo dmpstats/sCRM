@@ -47,6 +47,8 @@ features:
 - Automated report generation
 - Faster simulations, thanks to `{stochLAB}`
 
+__sCRM__ was developed by DMP Statistical Solutions Ltd, and is partnered with
+the Migration CRM tool ([mCRM](https://github.com/HiDef-Aerial-Surveying/mCRM)) developed by HiDef
+Aerial Surveying Ltd.
 
-__sCRM__ was developed by DMP Statistical Solutions Ltd and HiDef Aerial
-Surveying Ltd. This is a BETA version and is currently undergoing testing.
+__This is a BETA release and is currently undergoing testing.__

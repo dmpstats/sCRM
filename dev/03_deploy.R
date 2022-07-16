@@ -18,6 +18,11 @@
 devtools::check()
 rhub::check_for_cran()
 
+
+# bump version
+usethis::use_version()
+
+
 # Deploy
 
 ## Local, CRAN or Package Manager ---- 

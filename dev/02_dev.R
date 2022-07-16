@@ -190,10 +190,6 @@ usethis::use_gitlab_ci()
 
 
 
-?usethis::use_version()
-?usethis::use_news_md
-
-
 
 
 # You're now set! ----
