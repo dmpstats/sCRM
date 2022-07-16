@@ -55,10 +55,18 @@ app_ui <- function(request) {
         leftUi = tagList(
           tags$li(
             class = "dropdown",
-            actionLink(
-              inputId =  "appvrsn",
-              label = tags$b(paste0("v", packageVersion("sCRM"))),  
-              style = "font-size: 16px; padding-left: 5px; padding-right: 5px")
+            a(tags$b(paste0("v", packageVersion("sCRM"))),
+              href='https://github.com/dmpstats/sCRM/releases',
+              style = "font-size: 16px; padding-left: 5px; padding-right: 5px", 
+              target='_blank') %>%
+              bsplus::bs_embed_tooltip(
+                "App version", 
+                "bottom",
+                container = "body")
+            # actionLink(
+            #   inputId =  "appvrsn",
+            #   label = tags$b(paste0("v", packageVersion("sCRM"))),  
+            #   style = "font-size: 16px; padding-left: 5px; padding-right: 5px")
           ),
           tags$li(
             class = "dropdown", 

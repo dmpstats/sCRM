@@ -7,8 +7,9 @@
   - Added Option 4 estimates
   - Automated report generation
   - Integration with `{stochLAB}`, providing faster simulations.
-  - A complete re-design of the web-app structure to tackle the substantial
-  increase in the number of required inputs
+  - A significant re-design of the UI structure to tackle the substantial
+  increase in the number of required inputs, while keeping familiarity with the
+  predecessor's workflow.
   - A significant rewrite (virtually from scratch) of the app's back-end logic,
   with focus on code modularity, streamlining and performance.
 
