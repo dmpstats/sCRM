@@ -1,5 +1,5 @@
 # sCRM 0.1.0
-- First version of the updated sCRM app, to be release for Beta testing
+- First version of the updated sCRM app, to be released for Beta testing
 - Major changes from its predecessor tool [stochCRM](https://github.com/dmpstats/stochCRM) include:
   - Definition of multiple wind farm scenarios
   - Addition of seasonal outputs
