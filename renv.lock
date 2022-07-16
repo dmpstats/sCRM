@@ -113,22 +113,6 @@
         "rlang"
       ]
     },
-    "awn": {
-      "Package": "awn",
-      "Version": "0.0.1.9000",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "awn",
-      "RemoteUsername": "JohnCoene",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "08429b4a3c1011c3b7c933f943a89102240b7ce2",
-      "Hash": "e7317fac26bdaee93d8476f39517e67f",
-      "Requirements": [
-        "htmltools",
-        "shiny"
-      ]
-    },
     "base64enc": {
       "Package": "base64enc",
       "Version": "0.1-3",
@@ -1748,23 +1732,6 @@
       "Hash": "802e4786b353a4bb27116957558548d5",
       "Requirements": [
         "digest",
-        "jsonlite",
-        "shiny"
-      ]
-    },
-    "shinypop": {
-      "Package": "shinypop",
-      "Version": "0.1.1",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteRepo": "shinypop",
-      "RemoteUsername": "dreamRs",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "7745a0b1ecf31f783fa59603f3c5cede0c948118",
-      "Hash": "9719b542636970734c89a1c82836372a",
-      "Requirements": [
-        "htmltools",
         "jsonlite",
         "shiny"
       ]

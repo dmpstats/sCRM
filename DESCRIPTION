@@ -6,7 +6,6 @@ Description: A Shiny App for a stochastic Collision Risk Model (sCRM) for seabir
 License: MIT + file LICENSE
 Imports: 
     attempt,
-    awn (>= 0.0.1.9000),
     bs4Dash,
     bsplus,
     cicerone,
@@ -46,7 +45,6 @@ Imports:
     shinydashboardPlus,
     shinyFeedback,
     shinyjs,
-    shinypop (>= 0.1.1),
     shinyvalidate,
     shinyWidgets,
     stochLAB (>= 1.0.0),
