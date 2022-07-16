@@ -57,7 +57,7 @@ app_ui <- function(request) {
             class = "dropdown",
             actionLink(
               inputId =  "appvrsn",
-              label = tags$b(paste0("v", golem::get_golem_version())),          #packageVersion("sCRM")
+              label = tags$b(paste0("v", packageVersion("sCRM"))),  
               style = "font-size: 16px; padding-left: 5px; padding-right: 5px")
           ),
           tags$li(
