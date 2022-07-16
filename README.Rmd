@@ -58,8 +58,9 @@ sCRM can be accessed online on https://github.com/dmpstats/stochCRM
 
 
 ## To Do List
-- Implement an introductory tour of the tool for first time users
+- Add an introductory tour of the tool for first time users
 - Feature to upload inputs from external spreadsheets
+- User Manual update
 - State bookmarking (?)
 
 
