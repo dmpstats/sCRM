@@ -13,6 +13,7 @@
 #'
 #' @return No value returned
 #' 
+#' @noRd 
 add_wf_btns <- function(dpdn_add_wf_id,
                         dpdn_close_id,
                         sltz_wf_id,

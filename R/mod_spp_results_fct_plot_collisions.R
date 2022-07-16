@@ -140,7 +140,7 @@ plot_spp_collisions <- function(spp_out, band_mode){
   p +
     labs(
       title = glue::glue(
-        "Collision risk estimates of {spp_out$spp_label} at {spp_out$wf_label},",
+        "Collision risk estimates for {spp_out$spp_label} at {spp_out$wf_label},",
         " {period_label}"),
       y = "Number of Collisions",
       fill = "", 

@@ -302,7 +302,7 @@ fhd_inputs_app <- function(){
     )
     
     observe({
-      browser()
+      #browser()
       fhd
       fhd_iv$validate()
     })

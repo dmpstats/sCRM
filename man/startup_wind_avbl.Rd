@@ -13,6 +13,7 @@ A dataframe with 1 row and 12 columns.
 allowed for turbine operation}
 ...
 }
+}
 \usage{
 startup_wind_avbl
 }

@@ -160,7 +160,7 @@ app_ui <- function(request) {
         div(
           style = "position: absolute; bottom: 20px;",
           #img(src = "www/hexSticker_scrm.png", height = "150px"),
-          a(img(src = "www/MS Logo stacked.png", height = "45px"), 
+          a(img(src = "www/MS_Logo_stacked.png", height = "45px"), 
             href='https://www.gov.scot/Topics/marine',
             style = "padding-top: 10px; padding-bottom: 10px; padding-left:20px", 
             target='_blank'),
@@ -171,7 +171,7 @@ app_ui <- function(request) {
             style = "padding-top: 5px; padding-bottom: 10px; padding-left: 20px", 
             target='_blank'),
           
-          a(img(src = "www/HiDef Logo_2.png", height = "30px"), 
+          a(img(src = "www/HiDef_Logo_2.png", height = "30px"), 
             href='https://www.hidefsurveying.co.uk/',
             style = "padding-top: 5px; padding-bottom: 10px;padding-left: 20px", 
             target='_blank'),
@@ -302,7 +302,7 @@ golem_add_external_resources <- function(){
     
     sever::useSever(), 
     
-    cicerone::use_cicerone(),
+    #cicerone::use_cicerone(),
     
     shinyFeedback::useShinyFeedback()
     

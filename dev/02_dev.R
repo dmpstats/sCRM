@@ -55,6 +55,7 @@ usethis::use_package("writexl")
 usethis::use_package("zip")
 usethis::use_package("officer")
 usethis::use_package("rmarkdown")
+usethis::use_package("cicerone")
 
 usethis::use_dev_package("stochLAB", remote = "HiDef-Aerial-Surveying/stochLAB")
 usethis::use_dev_package("officedown", remote = "davidgohel/officedown")
@@ -185,6 +186,15 @@ usethis::use_jenkins()
 
 # GitLab CI
 usethis::use_gitlab_ci()
+
+
+
+
+?usethis::use_version()
+?usethis::use_news_md
+
+
+
 
 # You're now set! ----
 # go to dev/03_deploy.R

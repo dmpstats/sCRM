@@ -11,9 +11,10 @@ as point estimates (i.e. only **Mean** values required).
 **Operational Wind Availability**: the percentage of time wind conditions
 allow for turbine operation per month. Treated as point estimates.
 
-**Proportion of Month Operational**: Proportion of month during which
-turbines are operational. Actual inputs used in collision risk calculations,
-given by the difference between monthly wind availability as monthly downtime.
+**Proportion of Month Operational**: Proportion of month during which turbines
+are operational. Computed as the difference between monthly wind availability as
+monthly downtime, these are the actual values used in collision risk
+calculations.
 
 Months with missing values for either downtime or wind availability will be
 excluded from collision calculations.

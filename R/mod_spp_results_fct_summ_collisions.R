@@ -97,11 +97,11 @@ summ_spp_collisions <- function(spp_out, band_mode){
   # Table caption, depending on simulation mode
   if(band_mode == FALSE){
     tab_caption <-  glue::glue(
-      "Summary statistics of collision estimates of {spp_out$spp_label} at",
+      "Summary statistics of collision estimates for {spp_out$spp_label} at",
       " {spp_out$wf_label}, {period_label}")
   }else{
     tab_caption <-  glue::glue(
-      "Collision estimates of {spp_out$spp_label} at {spp_out$wf_label},",
+      "Collision estimates for {spp_out$spp_label} at {spp_out$wf_label},",
       " {period_label}")
   }
   

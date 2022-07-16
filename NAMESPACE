@@ -2,7 +2,6 @@
 
 export("%>%")
 export(inumericInput)
-export(iradioButtons)
 export(itextInput)
 export(run_app)
 import(cicerone)

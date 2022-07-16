@@ -11,6 +11,7 @@
 #'
 #' @return No value returned
 #' 
+#' @noRd
 add_spp_btns <- function(slctize_id, 
                          btn_add_id, 
                          drpdwn_btn_id, 

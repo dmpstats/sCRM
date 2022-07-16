@@ -78,8 +78,8 @@ mod_trbn_oper_ui <- function(id){
 #' @import dplyr
 #' @import shinyvalidate
 #' @importFrom truncnorm qtruncnorm
-
-
+#' 
+#' @noRd
 mod_trbn_oper_server <- function(id, band_mode, is_demo){
   
   stopifnot(is.reactive(band_mode))

@@ -21,6 +21,7 @@
 #' @examples
 #' inumericInput(inputId='test', label='test label', value=1)
 #' @keywords misc
+#' @noRd
 
 inumericInput <- function (inputId, label, label2=NULL, value, min = NA, max = NA, 
                            step = NA, label.style='float:left;padding:0.5em 1em 0.5em 0em;', 
@@ -76,6 +77,7 @@ inumericInput <- function (inputId, label, label2=NULL, value, min = NA, max = N
 #' @examples
 #' itextInput(inputId='test', label='test label', value=1)
 #' @keywords misc
+#' @noRd
 
 itextInput <- function (inputId, label, label2=NULL, value = "", width = NULL, 
                         placeholder = NULL, label.style='float:left;padding:0.5em 1em 0.5em 0em;', 
@@ -100,54 +102,56 @@ itextInput <- function (inputId, label, label2=NULL, value = "", width = NULL,
 }
 
 
-#' @name iradioButtons
-#' @title Create a radio button input with a label to the left of the input.
-#'   With no label it becomes an 'inline' input suitable for embedding in a
-#'   table.
-#' @param inputId The DOM ID.
-#' @param label The label to display to the left of the input.
-#' @param choices Named or unnamed character vector of selectable choices.
-#' @param selected The initial value for the input.
-#' @param inline Place options inline (TRUE) or stacked (FALSE).
-#' @param label.style Inline css to apply to the left-of-input label.
-#' @param input.style Inline css to apply to the main input tag.
-#' @param container.style Inline css to apply to the outer container.
-#' @param container A named list of containers to apply. May length one or two,
-#'   with names in c('outer', 'inner'); if length one the value will be applied
-#'   to the outer container, and the inner will be a span by default. Should be
-#'   either a block container 'div' or an inline container 'span'.
-#' @export
-#' @author [Jon Katz](https://github.com/jonkatz2/shinyAddOns)
-#' @examples
-#' iradioButtons(inputId='test', label='test label', value=1)
-#' @keywords misc
-
-iradioButtons <- function (inputId, label, choices, selected = NULL, inline = FALSE, 
-                           width = NULL, padding='0.5em 1em 0.5em 0em', thin=FALSE, container=shiny::div) 
-{
-  choices <- shiny:::choicesWithNames(choices)
-  selected <- if (is.null(selected)) 
-    choices[[1]]
-  else {
-    shiny:::validateSelected(selected, choices, inputId)
-  }
-  if (length(selected) > 1) 
-    stop("The 'selected' argument must be of length 1")
-  options <- shiny:::generateOptions(inputId, choices, selected, inline, 
-                                     type = "radio")
-  divClass <- "form-group shiny-input-radiogroup shiny-input-container"
-  if (inline) 
-    divClass <- paste(divClass, "shiny-input-container-inline")
-  divStyle <- NULL
-  if (!is.null(width)) 
-    divStyle <- paste0("width: ", shiny::validateCssUnit(width), ";")
-  if(thin) 
-    divStyle <- paste0(divStyle, "margin-bottom:0px;")
-  
-  container(id = inputId, style = divStyle, class = divClass, 
-            shiny::tags$span(style=paste0("padding:", padding, ";"),
-                             if(label != '') label, options)
-  )
-}
+#' #' @name iradioButtons
+#' #' @title Create a radio button input with a label to the left of the input.
+#' #'   With no label it becomes an 'inline' input suitable for embedding in a
+#' #'   table.
+#' #' @param inputId The DOM ID.
+#' #' @param label The label to display to the left of the input.
+#' #' @param choices Named or unnamed character vector of selectable choices.
+#' #' @param selected The initial value for the input.
+#' #' @param inline Place options inline (TRUE) or stacked (FALSE).
+#' #' @param label.style Inline css to apply to the left-of-input label.
+#' #' @param input.style Inline css to apply to the main input tag.
+#' #' @param container.style Inline css to apply to the outer container.
+#' #' @param container A named list of containers to apply. May length one or two,
+#' #'   with names in c('outer', 'inner'); if length one the value will be applied
+#' #'   to the outer container, and the inner will be a span by default. Should be
+#' #'   either a block container 'div' or an inline container 'span'.
+#' #' @export
+#' #' @author [Jon Katz](https://github.com/jonkatz2/shinyAddOns)
+#' #' @examples
+#' #' iradioButtons(inputId='test', label='test label', choices = 2)
+#' #' @keywords misc
+#' #' 
+#' #' @noRd
+#' 
+#' iradioButtons <- function (inputId, label, choices, selected = NULL, inline = FALSE, 
+#'                            width = NULL, padding='0.5em 1em 0.5em 0em', thin=FALSE, container=shiny::div) 
+#' {
+#'   choices <- shiny:::choicesWithNames(choices)
+#'   selected <- if (is.null(selected)) 
+#'     choices[[1]]
+#'   else {
+#'     shiny:::validateSelected(selected, choices, inputId)
+#'   }
+#'   if (length(selected) > 1) 
+#'     stop("The 'selected' argument must be of length 1")
+#'   options <- shiny:::generateOptions(inputId, choices, selected, inline, 
+#'                                      type = "radio")
+#'   divClass <- "form-group shiny-input-radiogroup shiny-input-container"
+#'   if (inline) 
+#'     divClass <- paste(divClass, "shiny-input-container-inline")
+#'   divStyle <- NULL
+#'   if (!is.null(width)) 
+#'     divStyle <- paste0("width: ", shiny::validateCssUnit(width), ";")
+#'   if(thin) 
+#'     divStyle <- paste0(divStyle, "margin-bottom:0px;")
+#'   
+#'   container(id = inputId, style = divStyle, class = divClass, 
+#'             shiny::tags$span(style=paste0("padding:", padding, ";"),
+#'                              if(label != '') label, options)
+#'   )
+#' }
 
 

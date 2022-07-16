@@ -134,6 +134,7 @@
 #'   \item{February}{The percentage of February during which wind conditions
 #'   allowed for turbine operation}
 #'   ...
+#'   }
 "startup_wind_avbl"
 
 

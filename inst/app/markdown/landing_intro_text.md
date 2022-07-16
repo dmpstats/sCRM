@@ -2,10 +2,10 @@
 
 ## Welcome to sCRM!
 
-__sCRM__ is a web-based application designed to interact with the
-[`{stochLAB}`](https://www.github.com/HiDef-Aerial-Surveying/stochLAB) package.
+__sCRM__ is a web-based tool to run Collision Risk Models (CRMs) for seabird species via the
+[`{stochLAB}`](https://www.github.com/HiDef-Aerial-Surveying/stochLAB) package. 
 
-Collision Risk Models (CRMs) estimate the number of in-flight collisions of
+CRMs estimate the number of in-flight collisions of
 seabirds with offshore wind turbines, playing a vital role in the assessment of
 impacts of offshore wind farms on seabird populations. The original CRM was
 developed by [Band
@@ -48,6 +48,5 @@ features:
 - Faster simulations, thanks to `{stochLAB}`
 
 
-*__sCRM__ was developed by DMP Statistical Solutions Ltd and HiDef Aerial
-Surveying Ltd. This is a BETA version and the app and is currently undergoing
-testing.*
+__sCRM__ was developed by DMP Statistical Solutions Ltd and HiDef Aerial
+Surveying Ltd. This is a BETA version and is currently undergoing testing.

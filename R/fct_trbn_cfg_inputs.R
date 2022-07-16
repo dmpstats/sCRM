@@ -13,6 +13,7 @@
 #'
 #' @return No returned value.
 #'
+#' @noRd
 trbn_cfg_inputs <- function(ns, inputs_width = "100%", is_demo = FALSE){
   
   tagList(

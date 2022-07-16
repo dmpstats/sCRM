@@ -10,9 +10,10 @@
 #' 
 #' @param inputs_width character string, the width of the numeric input, e.g. '400px',
 #'   or '100%'.   
-#' @param startup_vals a list object
 #'
 #' @return No returned value.
+#' 
+#' @noRd
 
 wf_feat_inputs <- function(ns = ns, inputs_width = "100%", is_demo = FALSE){
 
