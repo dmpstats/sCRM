@@ -53,12 +53,12 @@ sCRM::run_app()
 ```
 
 ### Online
-sCRM can be accessed online on https://github.com/dmpstats/stochCRM
+sCRM can be accessed online on https://dmpstats.shinyapps.io/sCRM/
 
 
 
 ## To Do List
-- Add an introductory tour of the tool for first time users
+- Introductory tour of the tool for first time users
 - Feature to upload inputs from external spreadsheets
 - User Manual update
 - State bookmarking (?)
