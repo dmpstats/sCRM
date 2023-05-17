@@ -1,3 +1,7 @@
+# sCRM 0.1.1
+- Added patch to amend issue in specification of blade pitch angle input on 
+`band_crm()`, implying the conversion from degrees to radians.
+
 # sCRM 0.1.0
 - First version of the updated sCRM app, to be released for Beta testing
 - Major changes from its predecessor tool [stochCRM](https://github.com/dmpstats/stochCRM) include:
