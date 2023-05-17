@@ -418,7 +418,7 @@ mod_pnl_sim_server <- function(id, scrm_inputs, band_mode, app_session){
               rotor_speed = trb_ftr$blade_pitch_rtn$rtn_speed$mean,
               rotor_radius = trb_ftr$rtradius,
               blade_width = trb_ftr$bladewth,
-              blade_pitch = trb_ftr$blade_pitch_rtn$bld_pitch$mean,
+              blade_pitch = trb_ftr$blade_pitch_rtn$bld_pitch$mean * pi/180,
               n_blades = trb_ftr$nblades,
               hub_height = hub_height,
               n_turbines = wf_ftrs$nturb,
