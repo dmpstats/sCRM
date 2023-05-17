@@ -49,6 +49,4 @@ features:
 
 __sCRM__ was developed by DMP Statistical Solutions Ltd, and is partnered with
 the Migration CRM tool ([mCRM](https://github.com/HiDef-Aerial-Surveying/mCRM)) developed by HiDef
-Aerial Surveying Ltd.
-
-__This is a BETA release version and is currently undergoing testing.__
+Aerial Surveying Ltd. __This is a BETA release version and is currently undergoing testing.__

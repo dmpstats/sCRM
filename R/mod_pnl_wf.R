@@ -270,13 +270,11 @@ mod_pnl_wf_server <- function(id, band_mode, is_demo, wf_id,  wf_tp_id){
     iv <- InputValidator$new()
     
     ## Non-conditional inputs ------
-    iv$add_rule("tdloffset", sv_required(message = ""))
-    iv$add_rule("tdloffset", sv_numeric())
     iv$add_rule("lat", sv_required(message = ""))
     iv$add_rule("lat", sv_between(-90, 90))
 
     purrr::walk(
-      .x = c("wfwidth", "rtradius", "airgap", "bladewth"), 
+      .x = c("wfwidth", "tdloffset", "rtradius", "airgap", "bladewth"), 
       .f = function(x){
         iv$add_rule(x, sv_required(message = ""))
         iv$add_rule(x, sv_numeric())
