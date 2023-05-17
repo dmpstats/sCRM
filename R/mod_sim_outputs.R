@@ -86,8 +86,8 @@ mod_sim_outputs_ui <- function(id, scrm_outputs, band_mode){
           )
         )
       ),
-      
-      
+      shiny::fluidRow(),
+      br(),
       
       # exec required to run reactive list, one per windfarm
       rlang::exec(
@@ -309,7 +309,7 @@ mod_sim_outputs_server <- function(id, scrm_inputs, scrm_outputs, band_mode, nit
           p(
             icon("exclamation-circle"),
             "Inputs have been modified since last CRM Run. Outputs displayed",
-            " below are therefore out-of-date.",
+            " below are therefore out of date.",
             "Hit ",
             img(src='www/img_run_sCRM_bttn.png', height="7%", width="7%", 
                 style = "border: 1px solid; color: black"),
