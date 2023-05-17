@@ -120,7 +120,12 @@ summ_spp_collisions <- function(spp_out, band_mode){
       bg = "#edf2f7"
     ) %>%
     flextable::set_caption(
-      caption = tab_caption
+      caption = flextable::as_paragraph(
+        flextable::as_chunk(
+          tab_caption, 
+          props = flextable::fp_text_default(color = "gray41", font.size = 11)
+        )
+      )
     )
   
   list(summ_df = summ_df, summ_ft = summ_ft)
