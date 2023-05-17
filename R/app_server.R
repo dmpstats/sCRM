@@ -86,7 +86,7 @@ app_server <- function( input, output, session ) {
       tagAppendAttributes(
       modalDialog(
         easyClose = TRUE,
-        includeMarkdown( app_sys("inst/app/markdown/landing_intro_text.md") ), 
+        includeMarkdown( app_sys("app/markdown/landing_intro_text.md") ), 
         size = "l",
         # footer = tagList(
         #   shinyWidgets::actionBttn(
