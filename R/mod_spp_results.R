@@ -73,8 +73,7 @@ mod_spp_results_server <- function(id, coll_plot, coll_summ_ft){
     
     # render table
     output$collision_tbl <- renderUI({
-      coll_summ_ft %>%
-        flextable::htmltools_value(ft.htmlscroll = FALSE)
+        flextable::htmltools_value(coll_summ_ft)
     })
  
   })
