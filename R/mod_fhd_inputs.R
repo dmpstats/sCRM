@@ -283,7 +283,7 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
               )
           ),
           col_1(
-            style = "margin-top: 25px; margin-left: -20px",
+            style = "margin-top: 25px; margin-left: 3px",
             downloadButton(
               outputId = ns("dwnld_tmplt_fhd_gen"), 
               label = NULL, 
@@ -317,7 +317,7 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
               placement = "left")
         ),
         col_1(
-          style = "margin-top: 25px; margin-left: -20px",
+          style = "margin-top: 25px; margin-left: 3px",
           downloadButton(
             outputId = ns("dwnld_tmplt_fhd_site"), 
             label = NULL, 
