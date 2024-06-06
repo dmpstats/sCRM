@@ -67,6 +67,13 @@ load_fhd_boot <- function(name, path){
         #     "Invalid data: universally zero bootstraps values")
         # )
         
+      }else if(fhd_boot$height[1] != 0){
+        
+        list(
+          error = TRUE,
+          msg = "Column `height` must start from 0, denoting band '0-1m'"
+        )
+        
       }else{
         
         list(
@@ -74,14 +81,10 @@ load_fhd_boot <- function(name, path){
           dt = fhd_boot
         )
         
-        #fhd_boot
-        
       }
     }
   }
 }
-
-
 
 
 #' Read FHD estimates from user input file
@@ -150,23 +153,31 @@ load_fhd_est <- function(name, path){
           prop = matches("(P|p)rop")
         )
       
-      # # provide warning about relative distributions not summing up to 1
-      # # Not making this a strict requirement for now
-      # shinyFeedback::feedbackWarning(
-      #   inputId = input_id, 
-      #   show = abs(1 - sum(fhd$prop)) > 0.01, 
-      #   text = "Proportions at flight heights do not sum to up 1"
-      # )
-      
-      list(
-        error = FALSE,
-        dt = fhd
-      )
+      if(fhd$height[1] != 0){
+        
+        list(
+          error = TRUE,
+          msg = "Column `height` must start from 0, denoting band '0-1m'"
+        )
+        
+      }else{
+        
+        # # provide warning about relative distributions not summing up to 1
+        # # Not making this a strict requirement for now
+        # shinyFeedback::feedbackWarning(
+        #   inputId = input_id, 
+        #   show = abs(1 - sum(fhd$prop)) > 0.01, 
+        #   text = "Proportions at flight heights do not sum to up 1"
+        # )
+        
+        list(
+          error = FALSE,
+          dt = fhd
+        )
+      }
     }
   }
 }
-
-
 
 
 
