@@ -308,7 +308,7 @@ mod_sim_outputs_server <- function(id, scrm_inputs, scrm_outputs, band_mode, nit
         tagList( # style = "color: #d40404;"
           p(
             icon("exclamation-circle"),
-            "Inputs have been modified since last CRM Run. Outputs displayed",
+            "Inputs have been modified since the last CRM Run. Outputs displayed",
             " below are therefore out of date.",
             "Hit ",
             img(src='www/img_run_sCRM_bttn.png', height="7%", width="7%", 
