@@ -347,20 +347,21 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
       w$show()
       
       if(!band_mode()){
-        
         # subset bootstraps for current species
-        dplyr::filter(spp_dflts, spp_id == label2id(spp_label)) %>%
+        out <- dplyr::filter(spp_dflts, spp_id == label2id(spp_label)) %>%
           dplyr::pull(fhd_boot) %>%
           purrr::pluck(1)
         
       }else{
-        
         # subset estimates for current species
-        dplyr::filter(spp_dflts, spp_id == label2id(spp_label)) %>%
+        out <- dplyr::filter(spp_dflts, spp_id == label2id(spp_label)) %>%
           dplyr::pull(fhd_est) %>%
-          purrr::pluck(1) %>%
-          dplyr::rename(prop = est)
+          purrr::pluck(1)
+        
+        if(not_null(out)) out <- dplyr::rename(out, prop = est)
       }
+      
+      out
     })
     
     
@@ -500,7 +501,7 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
         
         # lolli plot
         fhd_lolli_plt(
-          data = gen_fhd_dflt(), 
+          data = gen_fhd_dflt(),
           height = height, 
           prop = prop, 
           spp_label = spp_label
