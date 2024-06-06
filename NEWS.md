@@ -1,3 +1,7 @@
+# sCRM 0.1.2
+- Incorporated patch fixing bug in upload of FHD for non-default species in deterministic mode
+- Added check on requirement for height column of uploaded FHDs starting from 0. Widget now issues error if data fails this requirement
+
 # sCRM 0.1.1
 - Added patch to amend issue in specification of blade pitch angle input on 
 `band_crm()`, implying the conversion from degrees to radians (pull request #4).
