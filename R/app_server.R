@@ -196,7 +196,6 @@ app_server <- function( input, output, session ) {
   
   ## Iterate over wf inputs reactively to store inputs -------------------------
   observe({
-    # browser()
     purrr::iwalk(rvtl(wf_inputs), function(x, y){
       scrm_inputs$wf_scens[[y]]$wf_inputs <- x()
     })

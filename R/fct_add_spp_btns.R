@@ -69,7 +69,7 @@ add_spp_btns <- function(slctize_id,
               label=NULL,
               choices = spp_choices,
               multiple=TRUE,
-              selected = init_spp_label,
+              selected = if(wf_label == init_wf_label) init_spp_label else NULL, #init_spp_label,
               options = list(
                 placeholder = "Select from list or add new species",
               create = TRUE)

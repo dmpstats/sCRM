@@ -24,30 +24,33 @@ mod_spp_in_wf_ui <- function(id, wf_label, band_mode = FALSE){
           
           # first rendering of demo species tab, which needs to be UI-side given
           # it involves module dependent on {rhandsometable}
-          tabPanel(
-            value = ns(init_spp_tp_id),
-            title = tagList(
-              strong(init_spp_label),
-              # Species panel remove button
-              shinyWidgets::circleButton(
-                inputId = ns(paste0("btn-rmv-spp-", init_spp_id)),
-                size = "xs",
-                status = "danger",
-                icon = icon("remove", verify_fa = FALSE),
-                class = "btn-rmv-tabPanel"
-              )
-            ),
-            # TabPanel content
-            wellPanel(
-              style = "padding-top: 10px",
-              mod_pnl_spp_ui(
-                id = ns(paste0('pnl-spp-', init_spp_id)),
-                spp_label = init_spp_label,
-                wf_label = wf_label,
-                band_mode = band_mode
+          if(wf_label == init_wf_label){
+            
+            tabPanel(
+              value = ns(init_spp_tp_id),
+              title = tagList(
+                strong(init_spp_label),
+                # Species panel remove button
+                shinyWidgets::circleButton(
+                  inputId = ns(paste0("btn-rmv-spp-", init_spp_id)),
+                  size = "xs",
+                  status = "danger",
+                  icon = icon("remove", verify_fa = FALSE),
+                  class = "btn-rmv-tabPanel"
+                )
+              ),
+              # TabPanel content
+              wellPanel(
+                style = "padding-top: 10px",
+                mod_pnl_spp_ui(
+                  id = ns(paste0('pnl-spp-', init_spp_id)),
+                  spp_label = init_spp_label,
+                  wf_label = wf_label,
+                  band_mode = band_mode
+                )
               )
             )
-          )
+          } else NULL
           
         )
       ),
