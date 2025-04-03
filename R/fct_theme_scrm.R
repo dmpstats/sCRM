@@ -11,8 +11,9 @@ theme_scrm <- function(){
   
   theme_bw() + 
     theme(
-      axis.text = element_text(size = 10),
-      axis.title = element_text(size = 11)
-      )
+      axis.text = element_text(size = 11),
+      axis.title = element_text(size = 11),
+      legend.text = element_text(size = 12)
+    )
   
 }
