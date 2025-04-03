@@ -121,60 +121,60 @@ app_server <- function( input, output, session ) {
 
 
   ## Append tabPanels for added windfarms in windfarm section   -----------
+  
+  # NOTE: new clash between {rhandsontable} and the latest version of {shiny}
+  # meant that dynamic rendering (e.g. via appendTab and insertUI) stopped
+  # working for modules dependent on rhandsontable tables :/ To fix this, the
+  # rendering of the first WF tab (the "Demo Windfarm") needs to be done ahead
+  # on the app_ui. Subsequent WF scenarios can then be added dynamically on the
+  # server side, as below.
   observeEvent(rv_wf$added_wf, {
 
     req(rv_wf$added_wf)
     
-    if(rv_wf$added_wf != "Demo Windfarm"){
-      w$show()  
-    }
-
     wf_label <- rv_wf$added_wf
     wf_id <- label2id(wf_label)
     wf_tp_id <- paste0("tbp-wf-", wf_id)
 
     # flag-up a demo wf
     is_demo <- stringr::str_detect(wf_id, "(D|d)emo")
-
-    appendTab(
-      inputId = "tbx-wf",
-      select = TRUE,
-      tabPanel(
-        value = wf_tp_id,
-        title = tagList(
-          strong(wf_label),
-          shinyWidgets::circleButton(
-            inputId = paste0("btn-rmv-wf-", wf_id),
-            size = "xs",
-            status = "danger",
-            icon = icon("remove", verify_fa = FALSE), #icon("minus")
-            class = "btn-rmv-tabPanel"
-          )
-        ),
-        # TabPanel content
-        wellPanel(
-          style = "padding-top: 10px",
-          # module for added wf main tabPanel content - UI side
-          mod_pnl_wf_ui(
-            id = paste0('pnl-wf-', wf_id),
-            band_mode = input$'swtc-band-mode',
-            is_demo = is_demo,
-            wf_label = wf_label
+    
+    if(rv_wf$added_wf != init_wf_label){ # required to avoid duplicating initial "demo" tab
+      
+      w$show()
+      
+      shiny::appendTab(
+        inputId = "tbx-wf",
+        select = TRUE,
+        tab = shiny::tabPanel(
+          value = wf_tp_id,
+          title = tagList(
+            strong(wf_label),
+            shinyWidgets::circleButton(
+              inputId = paste0("btn-rmv-wf-", wf_id),
+              size = "xs",
+              status = "danger",
+              icon = icon("remove", verify_fa = FALSE), #icon("minus")
+              class = "btn-rmv-tabPanel"
+            )
+          ),
+          
+          # TabPanel content
+          shiny::wellPanel(
+            style = "padding-top: 10px",
+            # module for added wf main tabPanel content - UI side
+            mod_pnl_wf_ui(
+              id = paste0('pnl-wf-', wf_id),
+              band_mode = input$'swtc-band-mode',
+              is_demo = is_demo,
+              wf_label = wf_label
+            )
           )
         )
       )
-    )
-
-    # # module for added wf main panel content - server side
-    # mod_pnl_wf_server(
-    #   paste0('pnl-wf-', wf_id),
-    #   band_mode = reactive(input$'swtc-band-mode'),
-    #   is_demo = is_demo,
-    #   scrm_inputs = scrm_inputs,
-    #   wf_id = wf_id,
-    #   wf_tp_id = wf_tp_id
-    # )
-    # 
+      
+    }
+    
     # scrm_inputs$wf_scens[[wf_id]]$wf_label <- wf_label
 
     # module for added wf main panel content - server side
@@ -205,8 +205,10 @@ app_server <- function( input, output, session ) {
 
   #g$set(50)
   
-  
   # Render menuSubItem on sidebar to enclose species in active windfarms ----------
+  
+  # NOTE: This re-renders the submenu items whenever the active_wfs change, so
+  # items for dropped WFs are removed automatically (and "magically")
   output$subItems_spps_in_wf <- renderMenu({
 
     req(input$'active-wfs')
@@ -220,42 +222,52 @@ app_server <- function( input, output, session ) {
           #text = paste0(x, " (1)"),
           tabName = paste0("sbsm-sppinwf-", label2id(x)),
           #icon = icon("at", verify_fa = FALSE)
-          )
+        )
       })
     
+    # NOTE: need to wrap sub-items in `sidebarMenu`, which gets nested in a
+    # parent `sidebarMenu` defined in app_ui(), so that dynamic toggling of
+    # species menu associated with WF works as expected. Alternative would be to
+    # set up dynamic removal via `removeUI`, similar to what is being done for
+    # the initial "demo" case
     shinydashboard::sidebarMenu(
       .list = wf_menuSubItems
-      )
+    )
   })
-
   
   #g$set(75)
   
+  # Generate tabItem for species in a given added windfarm -------------------
   
-  # Generate tabItem for species in a given added windfarm
+  # NOTE: similarly to the WF tabs above, issues with modules dependent on
+  # {rhandsomtable} and dynamic rendering server-side functions means that the
+  # first tabItem, in our case for the initial demo WF, needs to be specified
+  # ui-side. Subsequent sub-items can be added server-side,as below
   observeEvent(rv_wf$added_wf, {
 
     req(rv_wf$added_wf)
 
     wf_id <- label2id(rv_wf$added_wf)
-
-    insertUI(
-      selector = "#tabItemsEnvelope",
-      where = "beforeEnd",
-      multiple = TRUE,
-      immediate = TRUE,
-      ui = shinydashboard::tabItem(
-
-        tabName = paste0("sbsm-sppinwf-", wf_id),
-
-        # module for spp in wf - ui side
-        mod_spp_in_wf_ui(
-          id = paste0("pnl-sppinwf-", wf_id),
-          wf_label = rv_wf$added_wf
+    
+    if(rv_wf$added_wf != init_wf_label){ # required to avoid duplication of tab sub-item from initial WF, already specified UI-side
+      
+      insertUI(
+        selector = "#tabItemsEnvelope",
+        where = "beforeEnd",
+        multiple = TRUE,
+        immediate = TRUE,
+        ui = shinydashboard::tabItem(
+          tabName = paste0("sbsm-sppinwf-", wf_id),
+          # module for spp in wf - ui side
+          mod_spp_in_wf_ui(
+            id = paste0("pnl-sppinwf-", wf_id),
+            wf_label = rv_wf$added_wf, 
+            band_mode = input$'swtc-band-mode'
+          )
         )
       )
-    )
-
+    }
+    
     # module for spp in wf - server side
     spps_in_wf_dt[[wf_id]] <- mod_spp_in_wf_server(
       id = paste0("pnl-sppinwf-", wf_id),
@@ -334,6 +346,7 @@ app_server <- function( input, output, session ) {
       rmv_wf_id <- label2id(rmv_wf_label)
       # remove tabPanel
       removeTab(inputId = "tbx-wf", target = paste0("tbp-wf-", rmv_wf_id))
+      
       prev_actv_wf <<- c(actv_wf)
     }
   })

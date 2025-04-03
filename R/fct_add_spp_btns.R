@@ -22,7 +22,7 @@ add_spp_btns <- function(slctize_id,
   
   
   # Start-up species labels
-  spp_choices <- sort(c("Demo Species", "Arctic Skua", "Northern Fulmar", "Great Black-backed Gull",
+  spp_choices <- sort(c(init_spp_label, "Arctic Skua", "Northern Fulmar", "Great Black-backed Gull",
                         "Common Guillemot", "Northern Gannet", "Black-legged Kittiwake",
                         "Lesser Black-Backed Gull", "Little Auk", "Atlantic Puffin",
                         "Razorbill", "Arctic Tern", "Black-headed Gull",
@@ -69,7 +69,7 @@ add_spp_btns <- function(slctize_id,
               label=NULL,
               choices = spp_choices,
               multiple=TRUE,
-              selected = "Demo Species",
+              selected = init_spp_label,
               options = list(
                 placeholder = "Select from list or add new species",
               create = TRUE)

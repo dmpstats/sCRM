@@ -45,9 +45,9 @@ add_wf_btns <- function(dpdn_add_wf_id,
             selectizeInput(
               inputId = sltz_wf_id,
               label = NULL,
-              choices = "Demo Windfarm",
+              choices = init_wf_label,
               multiple = TRUE, 
-              selected = "Demo Windfarm",
+              selected = init_wf_label,
               options = list(
                 placeholder = "Provide Windfarm name(s)",
                 create = TRUE,
