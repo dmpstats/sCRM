@@ -34,10 +34,10 @@ app_server <- function( input, output, session ) {
   prev_actv_wf <- c()
 
   ## App loader ----------------------------------------
-  hostess <- Hostess$new("app_loader", infinite = TRUE)
-  hostess$start()
-  
-  #g <- waiter::Garcon$new(image = "myImage", opacity = 0.2, filter = "blur")
+  g <- waiter::Garcon$new("app_loader", filter = "opacity", direction = "bt", opacity = 0.2)
+  # hostess <- Hostess$new("app_loader", infinite = TRUE)
+  # hostess$start()
+   
   #g$set(15)
     
   ## Waiter loading panel for wf tabs  --------------
@@ -373,7 +373,8 @@ app_server <- function( input, output, session ) {
   #g$set(100)
   
   # close app loading screen elements
-  hostess$close()
+  #hostess$close()
+  g$close()
   waiter_hide()
   
   # Customized Shiny disconnected screen

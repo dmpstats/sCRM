@@ -24,16 +24,12 @@ app_ui <- function(request) {
     
     # loading screen -----------------------------------------------------------
     waiter::waiterShowOnLoad(
-      color = "#D8DEE9", # "#434C5E",
-      html = waiter::hostess_loader(
-        id = "app_loader",
-        svg = "www/favicon_2.svg",
-        text_color = "black",
-        #class = "label-center",
-        progress_type = "fill",
-        fill_direction = "btt",
-        center_page = TRUE
-      )
+      tags$img(
+        src = "www/favicon_2.svg",
+        height = 200,
+        id = "app_loader" # set id
+      ),
+      color = "#D8DEE9"
     ),
     
     # link to awesome fonts v6.0.0
@@ -346,7 +342,8 @@ golem_add_external_resources <- function(){
     
     waiter::useAttendant(),
     waiter::useWaiter(),
-    waiter::useHostess(),
+    #waiter::useHostess(),
+    waiter::useGarcon(),
     
     sever::useSever(), 
     
