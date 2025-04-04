@@ -20,7 +20,7 @@ rhub::check_for_cran()
 
 
 # bump version
-usethis::use_version(which = "patch")
+usethis::use_version(which = "minor", push = TRUE)
 
 
 # Deploy
