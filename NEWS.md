@@ -1,3 +1,5 @@
+# sCRM 0.2.0
+
 # sCRM 0.1.2
 - Incorporated patch fixing bug in upload of FHD for non-default species in deterministic mode
 - Added check on requirement for height column of uploaded FHDs starting from 0. Widget now issues error if data fails this requirement
