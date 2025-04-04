@@ -20,7 +20,7 @@
     workflow, preventing unintended displays in other workflows.
 
 ## Technical
-- Package built under R 4.3.3 with all dependencies verified as up to date.
+- Package built under R 4.3.3 with all dependencies up to date.
     
 
 
