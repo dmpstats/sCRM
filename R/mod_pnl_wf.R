@@ -210,7 +210,7 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
 #' @import zeallot
 #' 
 #' @noRd
-mod_pnl_wf_server <- function(id, band_mode, is_demo, wf_id,  wf_tp_id){
+mod_pnl_wf_server <- function(id, band_mode, is_demo, wf_id, wf_tp_id){
   
   stopifnot(is.reactive(band_mode))
   stopifnot(!is.reactive(is_demo))

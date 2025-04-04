@@ -5,9 +5,8 @@ account: dmpstats
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 5822492
-bundleId: 6101856
+bundleId: 10048496
 url: https://dmpstats.shinyapps.io/sCRM_dev/
-when: 1657905735.40493
-lastSyncTime: 1657905735.40493
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: dev

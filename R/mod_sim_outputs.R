@@ -30,7 +30,7 @@ mod_sim_outputs_ui <- function(id, scrm_outputs, band_mode){
     
     shinyWidgets::verticalTabPanel(
       title = span(wf_out[[1]]$wf_label, class = "vtab-title"),
-      rlang::exec(shinydashboard::tabBox, !!!spps_tbpnl_ls, width = 12)
+      rlang::exec(shinydashboard::tabBox, !!!spps_tbpnl_ls, width = 11)
     )
   })
 

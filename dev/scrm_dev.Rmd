@@ -28,9 +28,9 @@ tbp_wf_App <- function(){
   )
 
   server <- function(input, output, session) {
-    mod_pnl_wf_server('wf-1', band_mode = reactive(FALSE), is_demo = TRUE)
+    mod_pnl_wf_server(id = 'wf-1', band_mode = reactive(FALSE), is_demo = TRUE, wf_id = "wf_1", wf_tp_id = "tp-wf-1")
   }
-
+  
   shinyApp(ui, server)
 }
 
