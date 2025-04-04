@@ -24,16 +24,12 @@ app_ui <- function(request) {
     
     # loading screen -----------------------------------------------------------
     waiter::waiterShowOnLoad(
-      color = "#D8DEE9", # "#434C5E",
-      html = waiter::hostess_loader(
-        id = "app_loader",
-        svg = "www/favicon_2.svg",
-        text_color = "black",
-        #class = "label-center",
-        progress_type = "fill",
-        fill_direction = "btt",
-        center_page = TRUE
-      )
+      tags$img(
+        src = "www/favicon_2.svg",
+        height = 200,
+        id = "app_loader" # set id
+      ),
+      color = "#D8DEE9"
     ),
     
     # link to awesome fonts v6.0.0
@@ -227,7 +223,36 @@ app_ui <- function(request) {
                   dpdn_close_id = "drpdwn-close",
                   dpdn_upld_wf_id = "btn-upld-wf",
                   dwnl_btn_id = "dt-wf-inputs-tmpl",
-                  file_input_id = "flinput-wf-inputs")
+                  file_input_id = "flinput-wf-inputs"),
+                
+                # NOTE: new clash between {rhandsontable} and the latest version
+                # of {shiny} meant rendering of the initial WF tab needs to be
+                # done here.
+                tabPanel(
+                  value = init_wf_tp_id,
+                  title = tagList(
+                    strong(init_wf_label),
+                    shinyWidgets::circleButton(
+                      inputId = paste0("btn-rmv-wf-", init_wf_id),
+                      size = "xs",
+                      status = "danger",
+                      icon = icon("remove", verify_fa = FALSE), #icon("minus")
+                      class = "btn-rmv-tabPanel"
+                    )
+                  ),
+                  
+                  # TabPanel content
+                  shiny::wellPanel(
+                    style = "padding-top: 10px",
+                    # module for added wf main tabPanel content - UI side
+                    mod_pnl_wf_ui(
+                      id = paste0('pnl-wf-', init_wf_id),
+                      band_mode = FALSE,
+                      is_demo = TRUE,
+                      wf_label = init_wf_label
+                    )
+                  )
+                )
               )
             ),
             shinyjs::hidden(
@@ -238,6 +263,17 @@ app_ui <- function(request) {
                   style = "color: #dd4b39; font-size: 16px;"
                 )
               )
+            )
+          ),
+          
+          # NOTE: new clash between {rhandsontable} and the latest version of
+          # {shiny} meant rendering of the species menu sub-item for the initial
+          # WF tab needs to be done here UI-side.
+          tabItem(
+            tabName = paste0("sbsm-sppinwf-", init_wf_id),
+            mod_spp_in_wf_ui(
+              id = paste0("pnl-sppinwf-", init_wf_id),
+              wf_label = init_wf_label
             )
           ),
           
@@ -306,7 +342,8 @@ golem_add_external_resources <- function(){
     
     waiter::useAttendant(),
     waiter::useWaiter(),
-    waiter::useHostess(),
+    #waiter::useHostess(),
+    waiter::useGarcon(),
     
     sever::useSever(), 
     

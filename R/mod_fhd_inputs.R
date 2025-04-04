@@ -257,14 +257,14 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
           condition = "input.gensrc == 'default'",
           ns = ns,
           col_12(
-            plotOutput(ns("gen_dflt_plot"), width = "100%", height = 350)
+            plotOutput(ns("gen_dflt_plot"), width = "96%", height = 350)
             ),
           div(
             a("Source: Johnson et al (2014)",
               icon("up-right-from-square", verify_fa = FALSE),
               href ="http://onlinelibrary.wiley.com/doi/10.1111/1365-2664.12191/full", 
               target = "_blank"),
-            style = "text-align: right; font-size: 12px"
+            style = "text-align: right; font-size: 12px; margin-right: 16px;"
           ),
           br()
         ),
@@ -294,7 +294,7 @@ mod_fhd_inputs_server <- function(id, spp_label, band_mode){
           ),
           col_12(
             br(),
-            plotOutput(ns("gen_other_plot"), width = "100%", height = 350)
+            plotOutput(ns("gen_other_plot"), width = "96%", height = 350)
           )
         )
       )

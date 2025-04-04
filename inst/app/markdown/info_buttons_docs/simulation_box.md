@@ -12,7 +12,7 @@ icon" style="color: green;" class="fa fa-check-circle fa-lg"></i> if all its
 associated inputs pass the validation check.
 
 You will be able to run CRM when the required inputs for **all scenarios** are
-correctly specified. Otherwise the button <img src="www/img_run_sCRM_bttn.png"
+correctly specified. Otherwise the button <img src="../../www/img_run_sCRM_bttn.png"
 height="7%" width="7%" style="border: 1px solid; color: black"/> is disabled.
 
 **Random Seed** (useful for analysis reproducibility) and the **Number of

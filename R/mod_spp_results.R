@@ -23,7 +23,7 @@ mod_spp_results_ui <- function(id, out_opt, band_mode){
           #status = "primary"
           #justified = TRUE
         ), 
-        style = "float:right; margin-right: -18px; margin-top: -33px;"
+        style = "float:right; margin-right: -10px; margin-top: -33px;"
         #style = "margin-top: -30px;"
       ),
     ),
@@ -33,7 +33,8 @@ mod_spp_results_ui <- function(id, out_opt, band_mode){
         condition = "input.plt_tbl_switch == 'plot'", 
         ns = ns,
         plotOutput(
-          outputId = ns("collision_plot"), 
+          outputId = ns("collision_plot"),
+          width = "95%",
           height = ifelse(out_opt == "months" & band_mode == FALSE, 800, 450)
         )
       ),
@@ -53,7 +54,6 @@ mod_spp_results_ui <- function(id, out_opt, band_mode){
 #' @noRd 
 mod_spp_results_server <- function(id, coll_plot, coll_summ_ft){
   
-
   
   moduleServer( id, function(input, output, session){
     ns <- session$ns
@@ -73,7 +73,7 @@ mod_spp_results_server <- function(id, coll_plot, coll_summ_ft){
     
     # render table
     output$collision_tbl <- renderUI({
-        flextable::htmltools_value(coll_summ_ft)
+      flextable::htmltools_value(coll_summ_ft)
     })
  
   })

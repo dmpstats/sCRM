@@ -61,7 +61,10 @@ plot_spp_collisions <- function(spp_out, band_mode){
         axis.text.x = element_blank(),
         axis.ticks.x = element_blank(),
         axis.title.x = element_blank(),
-        legend.position = "bottom"
+        axis.text.y = element_text(size = 11),
+        axis.title.y = element_text(size = 11),
+        legend.position = "bottom",
+        legend.text = element_text(size = 12)
       ) +
     labs(subtitle = glue::glue(
       "Density distribution, median, 66% and 95% quantile intervals and quantile",

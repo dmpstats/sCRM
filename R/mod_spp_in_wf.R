@@ -7,7 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_spp_in_wf_ui <- function(id, wf_label){
+mod_spp_in_wf_ui <- function(id, wf_label, band_mode = FALSE){
   ns <- NS(id)
   
   tagList(
@@ -20,7 +20,38 @@ mod_spp_in_wf_ui <- function(id, wf_label){
         shinydashboard::tabBox(
           id = ns("tbx-spps"),
           width = 12,
-          title = uiOutput(ns("tbx-title-add-spp-btns"))
+          title = uiOutput(ns("tbx-title-add-spp-btns")),
+          
+          # first rendering of demo species tab, which needs to be UI-side given
+          # it involves module dependent on {rhandsometable}
+          if(wf_label == init_wf_label){
+            
+            tabPanel(
+              value = ns(init_spp_tp_id),
+              title = tagList(
+                strong(init_spp_label),
+                # Species panel remove button
+                shinyWidgets::circleButton(
+                  inputId = ns(paste0("btn-rmv-spp-", init_spp_id)),
+                  size = "xs",
+                  status = "danger",
+                  icon = icon("remove", verify_fa = FALSE),
+                  class = "btn-rmv-tabPanel"
+                )
+              ),
+              # TabPanel content
+              wellPanel(
+                style = "padding-top: 10px",
+                mod_pnl_spp_ui(
+                  id = ns(paste0('pnl-spp-', init_spp_id)),
+                  spp_label = init_spp_label,
+                  wf_label = wf_label,
+                  band_mode = band_mode
+                )
+              )
+            )
+          } else NULL
+          
         )
       ),
       
@@ -132,7 +163,7 @@ mod_spp_in_wf_server <- function(id, band_mode, wf_label, wf_id, wf_oper){
         file_input_id = ns("flinput-spp-inputs"),
         dpdn_close_id = ns("close-drpdwn-spp"),
         wf_label = wf_label
-        )
+      )
     })
     
     
@@ -148,35 +179,38 @@ mod_spp_in_wf_server <- function(id, band_mode, wf_label, wf_id, wf_oper){
       spp_id <- label2id(spp_label)
       spp_tp_id <- ns(paste0("tbp-", spp_id))
       
-      # Dynamically append tabPanel for a new species
-      appendTab(
-        inputId = "tbx-spps",
-        select = TRUE,
-        tabPanel(
-          value = spp_tp_id,
-          title = tagList(
-            strong(spp_label), 
-            # Species panel remove button
-            shinyWidgets::circleButton(
-              inputId = ns(paste0("btn-rmv-spp-", spp_id)),
-              size = "xs",
-              status = "danger",
-              icon = icon("remove", verify_fa = FALSE),
-              class = "btn-rmv-tabPanel"
-            )
-          ),
-          # TabPanel content
-          wellPanel(
-            style = "padding-top: 10px",
-            mod_pnl_spp_ui(
-              id = ns(paste0('pnl-spp-', spp_id)),
-              spp_label = spp_label, 
-              wf_label = wf_label,
-              band_mode = isolate(band_mode())
+      if(spp_label != init_spp_label){
+        
+        # Dynamically append tabPanel for a new species
+        appendTab(
+          inputId = "tbx-spps",
+          select = TRUE,
+          tab = tabPanel(
+            value = spp_tp_id,
+            title = tagList(
+              strong(spp_label), 
+              # Species panel remove button
+              shinyWidgets::circleButton(
+                inputId = ns(paste0("btn-rmv-spp-", spp_id)),
+                size = "xs",
+                status = "danger",
+                icon = icon("remove", verify_fa = FALSE),
+                class = "btn-rmv-tabPanel"
+              )
+            ),
+            # TabPanel content
+            wellPanel(
+              style = "padding-top: 10px",
+              mod_pnl_spp_ui(
+                id = ns(paste0('pnl-spp-', spp_id)),
+                spp_label = spp_label, 
+                wf_label = wf_label,
+                band_mode = isolate(band_mode())
+              )
             )
           )
         )
-      )
+      }
       
       # module for selected species' main tabPanel - Server side
       spp_inputs[[spp_id]] <- mod_pnl_spp_server(
