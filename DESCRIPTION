@@ -10,7 +10,6 @@ Imports:
     bsplus,
     cicerone,
     config (>= 0.3.1),
-    covrpage,
     distributional,
     dplyr,
     DT,
@@ -60,7 +59,7 @@ Imports:
     zip
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.1
+RoxygenNote: 7.3.2
 Suggests: 
     knitr,
     spelling,
