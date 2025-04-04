@@ -1,5 +1,30 @@
 # sCRM 0.2.0
 
+## Bug Fixes
+
+- Fixed issue #6, which revealed additional related bugs now also resolved. Notably:
+  - Addressed disappearing UI panels caused by conflicts between `{rHandsontable}`, 
+  Shiny modules, and server-side rendering. This required significant refactoring 
+  of the source code.
+  - Resolved `{shinyvalidate}` feedback not displaying when used in combination 
+  with `waiter::Hostess()`. This was fixed by replacing `Hostess()` with `Garcon()`
+  for webpage loading.
+
+## Enhancements
+
+- Minor UI improvements, including:
+  - Font size adjustments for plot axis labels and legends.
+  - Improved plot padding for better layout.
+  - Updated logic for rendering species-level panels:
+    - The "Demo Species" panel is now rendered only for the "Demo Windfarm" 
+    workflow, preventing unintended displays in other workflows.
+
+## Technical
+- Package built under R 4.3.3 with all dependencies verified as up to date.
+    
+
+
+
 # sCRM 0.1.2
 - Incorporated patch fixing bug in upload of FHD for non-default species in deterministic mode
 - Added check on requirement for height column of uploaded FHDs starting from 0. Widget now issues error if data fails this requirement
