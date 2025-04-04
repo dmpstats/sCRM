@@ -17,7 +17,7 @@
   - Improved plot padding for better layout.
   - Updated logic for rendering species-level panels:
     - The "Demo Species" panel is now rendered only for the "Demo Windfarm" 
-    workflow, preventing unintended displays in other workflows.
+    scenario, preventing unintended displays in other non-demo scenarios.
 
 ## Technical
 - Package built under R 4.3.3 with all dependencies up to date.
