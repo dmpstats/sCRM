@@ -1,3 +1,9 @@
+# sCRM 0.2.1
+
+- Small patch to attempt fixing issue #5. Done by ensuring paths to markdowns 
+underpinning help buttons are built relative to package's location in path tree.
+
+
 # sCRM 0.2.0
 
 ## Bug Fixes
