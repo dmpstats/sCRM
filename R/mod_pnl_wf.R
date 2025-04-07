@@ -46,7 +46,8 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
             dropdownMenu = info_dropdown(
               inputId = ns("wfftinfo"),
               placement = "bottom-start",
-              md_path =  "inst/app/markdown/info_buttons_docs/wf_features.md"
+              #md_path = "inst/app/markdown/info_buttons_docs/wf_features.md"
+              md_path = app_sys("app/markdown/info_buttons_docs/wf_features.md")
             ),
             
             wf_feat_inputs(ns = ns, inputs_width = "90%", is_demo)
@@ -64,7 +65,8 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
             dropdownMenu = info_dropdown(
               inputId = ns("trbnftinfo"),
               placement = "bottom-end", 
-              md_path = "inst/app/markdown/info_buttons_docs/trbn_features.md"
+              #md_path = "inst/app/markdown/info_buttons_docs/trbn_features.md"
+              md_path = app_sys("app/markdown/info_buttons_docs/trbn_features.md")
             ),
             
             fluidRow(
@@ -86,7 +88,8 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
                   dropdownMenu = info_dropdown(
                     inputId = ns("pitchrotinfo"),
                     placement = "bottom-end", 
-                    md_path = "inst/app/markdown/info_buttons_docs/pitch_rotationspeed.md"
+                    #md_path = "inst/app/markdown/info_buttons_docs/pitch_rotationspeed.md"
+                    md_path = app_sys("app/markdown/info_buttons_docs/pitch_rotationspeed.md")
                   ),
                   
                   #p("Choose how to incorporate uncertainty in blade pitch and rotation speed"),
@@ -180,7 +183,8 @@ mod_pnl_wf_ui <- function(id, band_mode, is_demo, wf_label){
         dropdownMenu = info_dropdown(
           inputId = ns("trbnoperinfo"),
           placement = "bottom-end", 
-          md_path = "inst/app/markdown/info_buttons_docs/trbn_operation.md"
+          #md_path = "inst/app/markdown/info_buttons_docs/trbn_operation.md"
+          md_path = app_sys("app/markdown/info_buttons_docs/trbn_operation.md")
         ),
         
         # Turbine monthly operation module

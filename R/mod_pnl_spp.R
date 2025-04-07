@@ -57,7 +57,8 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
             dropdownMenu = info_dropdown(
               inputId = ns("biominfo"),
               placement = "bottom-end",
-              md_path =  "inst/app/markdown/info_buttons_docs/spp_body_dimensions.md"
+              #md_path =  "inst/app/markdown/info_buttons_docs/spp_body_dimensions.md"
+              md_path = app_sys("app/markdown/info_buttons_docs/spp_body_dimensions.md")
             ),
             
             mod_prob_inputs_ui(
@@ -78,7 +79,8 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
             dropdownMenu = info_dropdown(
               inputId = ns("inflightinfo"),
               placement = "bottom-end",
-              md_path =  "inst/app/markdown/info_buttons_docs/spp_inflight_features.md"
+              #md_path =  "inst/app/markdown/info_buttons_docs/spp_inflight_features.md"
+              md_path =  app_sys("app/markdown/info_buttons_docs/spp_inflight_features.md")
             ),
             
             fluidRow(
@@ -145,7 +147,8 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
             dropdownMenu = info_dropdown(
               inputId = ns("fhdinfo"),
               placement = "bottom-end",
-              md_path =  "inst/app/markdown/info_buttons_docs/spp_fhd.md"
+              #md_path =  "inst/app/markdown/info_buttons_docs/spp_fhd.md"
+              md_path =  app_sys("/app/markdown/info_buttons_docs/spp_fhd.md")
             ),
             
             mod_fhd_inputs_ui(id = ns("fhd")),
@@ -165,7 +168,8 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
         dropdownMenu = info_dropdown(
           inputId = ns("densinfo"),
           placement = "bottom-end",
-          md_path =  "inst/app/markdown/info_buttons_docs/spp_density.md"
+          #md_path =  "inst/app/markdown/info_buttons_docs/spp_density.md"
+          md_path =  app_sys("/app/markdown/info_buttons_docs/spp_density.md")
         ),
         
         mod_bird_dens_ui(
@@ -183,7 +187,8 @@ mod_pnl_spp_ui <- function(id, spp_label, wf_label, band_mode){
         dropdownMenu = info_dropdown(
           inputId = ns("outoptinfo"),
           placement = "bottom-end",
-          md_path =  "inst/app/markdown/info_buttons_docs/spp_output_options.md"
+          #md_path = "inst/app/markdown/info_buttons_docs/spp_output_options.md"
+          md_path = app_sys("app/markdown/info_buttons_docs/spp_output_options.md")
         ),
         
         mod_output_spec_ui(id = ns("outspec"))

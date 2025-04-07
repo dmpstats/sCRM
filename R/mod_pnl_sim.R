@@ -25,7 +25,8 @@ mod_pnl_sim_ui <- function(id){
       dropdownMenu = info_dropdown(
         inputId = ns("siminfo"),
         placement = "bottom-start",
-        md_path =  "inst/app/markdown/info_buttons_docs/simulation_box.md"
+        #md_path =  "inst/app/markdown/info_buttons_docs/simulation_box.md"
+        md_path =  app_sys("app/markdown/info_buttons_docs/simulation_box.md")
       ),
       
       mod_sim_options_ui(id = ns("sim-options"))
